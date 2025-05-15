@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Screen</title>
+</head>
+<body>
+    <h1>Login Screen</h1>
+    <h2>Welcome to the Login Page</h2>
+    <p>Please enter your username and password to log in.</p>
+
+    <form action="http://localhost:5000/login_request" method="get">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+        <br><br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password">
+        <br><br>
+        <button type="login">Login</button>
+    
+    </form>
+    <p>Don't have an account? <a href="index.html">Sign up here</a></p>
+</body>
+</html>
+
