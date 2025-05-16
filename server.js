@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const mysql = require('mysql2');
 
 const app = express();
 const port = 5000;
@@ -10,25 +11,77 @@ app.use(bodyParser.json());
 
 app.use(express.static('public'));
 
+// environment variables
+require('dotenv').config();
+
+// MySQL connection
+const connection = mysql.createConnection({
+    host: process.env.MY_SQL_HOST,
+    user: process.env.MY_SQL_USER,
+    password: process.env.MY_SQL_PASSWORD,
+    database: process.env.MY_SQL_DATABASE,
+    port: process.env.MY_SQL_PORT,
+});
+
+connection.connect((err) => {
+    if (err) {
+        console.error('Error connecting to the database:', err);
+        return;
+    }
+    console.log('Connected to the MySQL database.');
+});
+
 
 
 // Route to handle form submission
 app.post('/submit', (req, res) => {
-   
+    const { username, password } = req.body;
 
     // Insert data into the database
-   
+    const query = 'INSERT INTO user_login_stocks (username, password) VALUES (?, ?)';
+    connection.query(query, [username, password], (err, results) => {
+        if (err) {
+            console.error('Error inserting data:', err);
+            res.status(500).send('Error saving data to the database.');
+            return;
+        }
+        console.log('Data inserted:', results);
         res.send('Data saved successfully into mySQL!');  
-        console.log('Data received:');
+    });
 });
 
 // Route to handle login requests
 app.get('/login_request', (req, res) => {
-    
-        res.send("hello");
+    //console.log('reached the endpoint /login_request');
+    const { username, password } = req.query;
+    //console.log('identifiers', username, password);
+
+    // Retrieve data from the database
+    const query = `SELECT * FROM user_login_stocks WHERE username = '${username}'AND password = '${password}'`;
+
+    connection.query(query, [username, password], (err, results) => {
+        if (err) {
+            console.error('Error retrieving data:', err);
+            res.status(500).send('Error retrieving data from the database.');
+            return;
+        }
+
+        if (results.length === 0) {
+            //console.log('No matching user found.');
+            res.status(401).send('Invalid username or password.');
+            return;
+        }
+        else {
+            console.log('User found:', results);
+        
+        //console.log(results);
+        res.send(results);
         //notify the app that the user is logged in and retrieve the corresping data from the client key
         
-        });
+        }
+
+    });
+});
 
 
 
@@ -36,4 +89,12 @@ app.get('/login_request', (req, res) => {
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });
+
+
+
+
+
+
+
+
 
