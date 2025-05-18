@@ -46,7 +46,8 @@ app.post('/submit', (req, res) => {
             return;
         }
         console.log('Data inserted:', results);
-        res.status(200).json('Data saved successfully into mySQL!');  
+        // For success response
+res.status(200).json({ message: "Data saved successfully into mySQL!" }, results);  
     });
 });
 
@@ -62,20 +63,20 @@ app.get('/login_request', (req, res) => {
     connection.query(query, [username, password], (err, results) => {
         if (err) {
             console.error('Error retrieving data:', err);
-            res.status(500).send('Error retrieving data from the database.');
+            res.status(500).json({message:'Error retrieving data from the database.'}, results);
             return;
         }
 
         if (results.length === 0) {
             //console.log('No matching user found.');
-            res.status(401).send('Invalid username or password.');
+            res.status(401).json({message:'Invalid username or password.'}, results);
             return;
         }
         else {
             console.log('User found:', results);
         
         //console.log(results);
-        res.send(results);
+        res.status(200).json({message:'User found:'}, results);
         //notify the app that the user is logged in and retrieve the corresping data from the client key
         
         }
