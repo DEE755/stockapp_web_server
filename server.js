@@ -42,16 +42,12 @@ app.post('/submit', (req, res) => {
     connection.query(query, [username, password], (err, results) => {
         if (err) {
             console.error('Error inserting data:', err);
-            res.status(500).send({message:'Error saving data to the database.', err});
+            res.status(500).json({message:'Error saving data to the database.', err});
             return;
         }
         console.log('Data inserted:', results);
         // For success response
-if (results) {
-  res.status(200).json({ message: "Data saved successfully into mySQL!", results });
-} else {
-  res.status(200).json({ message: "Data saved successfully into mySQL!", results: [] });
-} 
+res.status(200).json({ message: 'Data inserted successfully.' });
     });
 });
 
