@@ -36,18 +36,15 @@ connection.connect((err) => {
 // Route to handle form submission
 app.post('/submit', (req, res) => {
     const { username, password } = req.body;
-
-    // Insert data into the database
     const query = 'INSERT INTO user_login_stocks (username, password) VALUES (?, ?)';
     connection.query(query, [username, password], (err, results) => {
         if (err) {
             console.error('Error inserting data:', err);
-            res.status(500).json({message:'Error saving data to the database.', err});
+            res.status(500).json({ success: false, message: 'Error saving data to the database.' });
             return;
         }
         console.log('Data inserted:', results);
-        // For success response
-res.status(200).json({ message: 'Data inserted successfully.' });
+        res.status(200).json({ success: true, message: 'Data saved successfully into mySQL!' });
     });
 });
 
@@ -63,24 +60,16 @@ app.get('/login_request', (req, res) => {
     connection.query(query, [username, password], (err, results) => {
         if (err) {
             console.error('Error retrieving data:', err);
-            res.status(500).json({message:'Error retrieving data from the database.', err});
+            res.status(500).json({ success: false, message: 'Error retrieving data from the database.' });
             return;
         }
-
         if (results.length === 0) {
-            //console.log('No matching user found.');
-            res.status(401).json({message:'Invalid username or password.'});
+            res.status(401).json({ success: false, message: 'Invalid username or password.' });
             return;
-        }
-        else {
+        } else {
             console.log('User found:', results);
-        
-        //console.log(results);
-        res.status(200).json({message:'User found:', results});
-        //notify the app that the user is logged in and retrieve the corresping data from the client key
-        
+            res.status(200).json({ success: true, user: results[0] }); // or send the whole array if needed
         }
-
     });
 });
 
