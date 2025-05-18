@@ -47,7 +47,11 @@ app.post('/submit', (req, res) => {
         }
         console.log('Data inserted:', results);
         // For success response
-res.status(200).json({ message: "Data saved successfully into mySQL!", results });  
+if (results) {
+  res.status(200).json({ message: "Data saved successfully into mySQL!", results });
+} else {
+  res.status(200).json({ message: "Data saved successfully into mySQL!", results: [] });
+} 
     });
 });
 
