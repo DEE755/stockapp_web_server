@@ -36,15 +36,17 @@ connection.connect((err) => {
 // Route to handle form submission
 app.post('/submit', (req, res) => {
     const { username, password } = req.body;
+
+    // Insert data into the database
     const query = 'INSERT INTO user_login_stocks (username, password) VALUES (?, ?)';
     connection.query(query, [username, password], (err, results) => {
         if (err) {
             console.error('Error inserting data:', err);
-            res.status(500).json({ success: false, message: 'Error saving data to the database.' });
+            res.status(500).send('Error saving data to the database.');
             return;
         }
         console.log('Data inserted:', results);
-        res.status(200).json({ success: true, message: 'Data saved successfully into mySQL!' });
+        res.status(200).json('Data saved successfully into mySQL!');  
     });
 });
 
@@ -60,16 +62,24 @@ app.get('/login_request', (req, res) => {
     connection.query(query, [username, password], (err, results) => {
         if (err) {
             console.error('Error retrieving data:', err);
-            res.status(500).json({ success: false, message: 'Error retrieving data from the database.' });
+            res.status(500).send('Error retrieving data from the database.');
             return;
         }
+
         if (results.length === 0) {
-            res.status(401).json({ success: false, message: 'Invalid username or password.' });
+            //console.log('No matching user found.');
+            res.status(401).send('Invalid username or password.');
             return;
-        } else {
-            console.log('User found:', results);
-            res.status(200).json({ success: true, user: results[0] }); // or send the whole array if needed
         }
+        else {
+            console.log('User found:', results);
+        
+        //console.log(results);
+        res.send(results);
+        //notify the app that the user is logged in and retrieve the corresping data from the client key
+        
+        }
+
     });
 });
 
