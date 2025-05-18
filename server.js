@@ -46,7 +46,7 @@ app.post('/submit', (req, res) => {
             return;
         }
         console.log('Data inserted:', results);
-        res.status(200).send('Data saved successfully into mySQL!');  
+        res.status(200).json('Data saved successfully into mySQL!');  
     });
 });
 
