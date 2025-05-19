@@ -1,18 +1,25 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const mysql = require('mysql2');
+
+import dotenv from 'dotenv';
+import express from 'express';
+import bodyParser from 'body-parser';
+import mysql from 'mysql2';
+import fetch from 'node-fetch';
+import cors from 'cors';
+import finnhub from 'finnhub';
 
 const app = express();
 const port = 5000;
 
 // Middleware to parse form data
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+//app.use(bodyParser.json());
 
 app.use(express.static('public'));
+app.use(express.json());
+app.use(cors());
 
 // environment variables
-require('dotenv').config();
+dotenv.config();
 
 // MySQL connection
 const connection = mysql.createConnection({
@@ -30,6 +37,13 @@ connection.connect((err) => {
     }
     console.log('Connected to the MySQL database.');
 });
+
+
+//finnhub Stock API client
+const finnhubClient = new finnhub.DefaultApi();
+finnhub.ApiClient.instance.authentications['api_key'].apiKey = process.env.STOCK_API_KEY;
+
+
 
 
 
@@ -84,10 +98,92 @@ app.get('/login_request', (req, res) => {
 });
 
 
+//FINNNHUB API route to get stock data
+
+app.get('/get_stocks', async (req, res) => {
+  try {
+    const response = await fetch(`https://finnhub.io/api/v1/stock/symbol?exchange=US&token=${process.env.STOCK_API_KEY}`);
+    const data = await response.json();
+
+    const cleaned = data.map(item => ({
+      symbol: item.symbol,
+      name: item.description
+    }));
+
+    res.json(cleaned);
+  } catch (error) {
+    console.error('Error fetching stock symbols:', error);
+    res.status(500).json({ error: 'Failed to load stock symbols' });
+  }
+});
+
+
+app.get('/get_quote', async (req, res) => {
+  console.log('POST /get_quote route hit');
+
+  finnhubClient.stockSymbols("US", (error, data, response) =>  {
+    console.log('Callback triggered'); // Log when the callback is triggered
+
+    if (error) {
+      console.error('Error fetching stock quote:', error);
+      res.status(500).send('Error fetching stock quote');
+    } else {
+      console.log('Stock quote data:', data);
+      res.json(data); // Send the data back to the client
+    }
+  });
+
+  console.log('After finnhubClient.quote call'); // Log after the call
+});
+
+app.post('/test', (req, res) => {
+  res.send('Test route working!');
+});
+
+finnhub.ApiClient.instance.timeout = 120000; // Set timeout to 120 seconds
+
+
+
+
+//PERPEXLITY API route to get AI ANSWERS TO QUESTIONS
+
+app.post('/ask', async (req, res) => {
+  const { question } = req.body;
+
+  const response = await fetch('https://api.perplexity.ai/chat/completions', {
+    method: 'POST',
+    headers: {
+      'accept': 'application/json',
+      'content-type': 'application/json',
+      'Authorization': `Bearer ${process.env.AI_API_KEY}`
+    },
+    body: JSON.stringify({
+      model: 'sonar-pro',
+      messages: [
+        { role: 'system', content: 'Be precise and concise.' },
+        { role: 'user', content: question }
+      ]
+    })
+  });
+
+  const data = await response.json();
+  res.json({ reply: data.choices?.[0]?.message?.content || 'No reply received.' });
+});
+
+
+
+
+
+
+
+
+
+
 
 // Start the server
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
+    console.log('Finnhub Client:', finnhubClient);
 });
 
 
