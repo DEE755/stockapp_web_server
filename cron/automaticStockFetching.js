@@ -58,13 +58,13 @@ export const addLogosToDbifNeeded = async () => {
                 console.error('Error updating logo URL:', err);
                 reject(err);
               } else {
-                console.log(`✅ Updated logo for ${stock.symbol}`);
+                console.log(`Updated logo for ${stock.name}`);
                 resolve();
               }
             });
           });
         } else {
-          console.log(`🚨 No logo found for ${stock.symbol}`);
+            console.log(`No logo found for ${stock.name}. Error: ${logo && logo.error ? logo.error : 'No error returned'}`);
         }
       } catch (error) {
         console.error('Error fetching brand logo:', error);
