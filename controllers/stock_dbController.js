@@ -1,19 +1,13 @@
 import db from '../services/db.js';
 
-export const fetchallStockDB = async (res) => {
-    console.log('reached fetchallStockDB');
-const query=`SELECT * FROM stocks`;
-    db.query(query, (err, results) => {
-        if (err) {
-            console.error('Error fetching stocks:', err);
-            return;
-        }
-        console.log('Fetched stocks:', results);
-        res.status(200).json(results);
-         return results;
-    });
-   
-}
+export const fetchallStockDB = (req, res) => {
+  const limit = parseInt(req.query.limit) || 100; // default 100
+  const offset = parseInt(req.query.offset) || 0;
+  db.query('SELECT * FROM stocks LIMIT ? OFFSET ?', [limit, offset], (err, results) => {
+    if (err) return res.status(500).json({ error: 'Database error' });
+    res.json(results);
+  });
+};
 
 
 export const loginRequest = (req, res) => {
