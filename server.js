@@ -22,6 +22,7 @@ app.use(express.json());
 app.use('/', authRoutes);
 app.use('/', stockFinnhubRoutes);
 app.use('/', AIperplexityRoutes);
+app.use('/', stock_dbRoutes);
 
 
 
