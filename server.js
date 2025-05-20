@@ -9,6 +9,7 @@ import authRoutes from './routes/authRoutes.js';
 import stockFinnhubRoutes from './routes/stockFinnhubRoutes.js';
 import AIperplexityRoutes from './routes/askAIPerplexityRoutes.js';
 import stock_dbRoutes from './routes/stock_dbRoutes.js';
+import maintenanceRoutes from './routes/maintenanceRoutes.js';
 
 dotenv.config();
 const app = express();
@@ -24,7 +25,7 @@ app.use('/', authRoutes);
 app.use('/', stockFinnhubRoutes);
 app.use('/', AIperplexityRoutes);
 app.use('/', stock_dbRoutes);
-
+app.use('/run_maintenance', maintenanceRoutes);
 
 
 // Cron job to fetch stocks every day at 00:00
