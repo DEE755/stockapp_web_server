@@ -12,10 +12,9 @@ export const AllStockFetching = async () => {
     //const cleaned = data.map(item => [item.symbol, item.description]);
     
     //all given fields version:
-    const cleaned = data.map(item => Object.values(item));
-    //////
+   const cleaned = data.map(item => [...Object.values(item), null]); // Add null for logo_url
 
-    const insertQuery = 'INSERT INTO stocks (symbol, name) VALUES ?';
+  const insertQuery = 'INSERT INTO stocks (currency, description, displaySymbol, figi, mic, symbol, type, logo_url) VALUES ?';
 
     // Optional: delete old data
     //await db.query('DELETE FROM stocks', () => {
