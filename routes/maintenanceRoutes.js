@@ -1,5 +1,5 @@
 import express from 'express';
-import { automaticscript } from '../cron/automaticStockFetching';
+import { automaticscript } from '../cron/automaticStockFetching.js';
 
 
 const router = express.Router();
