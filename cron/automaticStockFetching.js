@@ -50,7 +50,7 @@ export const addLogosToDbifNeeded = async () => {
     while (queue.length > 0) {
       const stock = queue.shift(); // Remove first item from queue
       try {
-        const logo = await getLogoFromLogoDev(stock.symbol);
+        const logo = await getLogoFromLogoDev2(stock.name);
         if (logo) {
           const updateQuery = 'UPDATE stocks SET logo_url = ? WHERE name = ?';
           await new Promise((resolve, reject) => {

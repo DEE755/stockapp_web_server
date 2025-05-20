@@ -9,13 +9,3 @@ export const fetchallStockDB = (req, res) => {
   });
 };
 
-
-export const loginRequest = (req, res) => {
-  const { username, password } = req.query;
-  const query = `SELECT * FROM user_login_stocks WHERE username = ? AND password = ?`;
-  db.query(query, [username, password], (err, results) => {
-    if (err) return res.status(500).send('Error');
-    if (!results.length) return res.status(401).send('Invalid');
-    res.send(results);
-  });
-};
