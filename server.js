@@ -4,8 +4,8 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 
 import authRoutes from './routes/authRoutes.js';
-import stockRoutes from './routes/stockRoutes.js';
-import askController from './controllers/askController.js';
+import stockFinnhubRoutes from './routes/stockFinnhubRoutes.js';
+import AIperplexityRoutes from './routes/askAIPerplexityRoutes.js';
 
 dotenv.config();
 const app = express();
@@ -18,8 +18,10 @@ app.use(express.json());
 
 // Routes
 app.use('/', authRoutes);
-app.use('/', stockRoutes);
-app.post('/ask', askController);
+app.use('/', stockFinnhubRoutes);
+app.use('/', AIperplexityRoutes);
+
+
 
 // Start
 app.listen(port, () => console.log(`Server running at http://localhost:${port}`));
