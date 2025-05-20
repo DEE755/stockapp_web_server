@@ -1,3 +1,5 @@
+import dotenv from 'dotenv';
+dotenv.config();
 
 
 export const getBrandLogo = async (brand_name) => {
@@ -13,6 +15,25 @@ export const getBrandLogo = async (brand_name) => {
     console.error('Error fetching brand logo:', error);
     return null;
   }
+};
+
+
+export const getLogoFromLogoDev = async (tickerSymbol) => {
+try {
+
+const publicToken = process.env.LOGODEVPUBLICKEY;
+const logoUrl = `https://img.logo.dev/ticker/${tickerSymbol}?token=${publicToken}`;
+
+if (logoUrl) return logoUrl;
+  return null;
+  
+} catch (error) 
+{
+  console.error('Error fetching brand logo:', error);
+    return null;
+  
+}
+
 };
 
 

@@ -1,6 +1,7 @@
 import fetch from 'node-fetch';
 import db from '../services/db.js'; // your mysql connection
 import { getBrandLogo } from '../branfetch.js';
+import { getLogoFromLogoDev } from '../branfetch.js';
 
 export const AllStockFetching = async () => {
   try {
@@ -33,7 +34,7 @@ export const AllStockFetching = async () => {
     // return the data:
     return data;
   } catch (error) {
-    console.error('🚨 Error in scheduled stock fetch:', error);
+    console.error(' Error in scheduled stock fetch:', error);
   }
 };
 
@@ -49,7 +50,7 @@ export const addLogosToDbifNeeded = async () => {
     while (queue.length > 0) {
       const stock = queue.shift(); // Remove first item from queue
       try {
-        const logo = await getBrandLogo(stock.name);
+        const logo = await getLogoFromLogoDev(stock.symbol);
         if (logo) {
           const updateQuery = 'UPDATE stocks SET logo_url = ? WHERE name = ?';
           await new Promise((resolve, reject) => {
@@ -76,5 +77,5 @@ export const addLogosToDbifNeeded = async () => {
 export const automaticscript = async () => {
     await AllStockFetching();
     await addLogosToDbifNeeded();
-    console.log('✅ Finished automatic stock fetching and logo updating at time:', new Date().toLocaleString());
+    console.log('Finished automatic stock fetching and logo updating at time:', new Date().toLocaleString());
 }
