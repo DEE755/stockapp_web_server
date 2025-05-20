@@ -2,6 +2,8 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import cron from 'node-cron';
+import {automaticscript} from './cron/automaticStockFetching.js';
 
 import authRoutes from './routes/authRoutes.js';
 import stockFinnhubRoutes from './routes/stockFinnhubRoutes.js';
@@ -21,6 +23,16 @@ app.use('/', authRoutes);
 app.use('/', stockFinnhubRoutes);
 app.use('/', AIperplexityRoutes);
 
+
+
+// Cron job to fetch stocks every day at 00:00
+// Run every day at midnight (00:00)
+
+// Run every day at 20:43 (8:43 PM)
+cron.schedule('43 20 * * *', () => {
+  console.log('🕐 Running scheduled stock fetch...');
+  automaticscript();
+});
 
 
 // Start
