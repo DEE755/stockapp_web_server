@@ -8,6 +8,7 @@ import {automaticscript} from './cron/automaticStockFetching.js';
 import authRoutes from './routes/authRoutes.js';
 import stockFinnhubRoutes from './routes/stockFinnhubRoutes.js';
 import AIperplexityRoutes from './routes/askAIPerplexityRoutes.js';
+import stock_dbRoutes from './routes/stock_dbRoutes.js';
 
 dotenv.config();
 const app = express();
