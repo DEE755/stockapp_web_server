@@ -10,7 +10,7 @@ const query=`SELECT * FROM stocks`;
         console.log('Fetched stocks:', results);
         res.status(200).json(results);
     });
-    return results;
+    //return results;
 }
 
 
