@@ -29,7 +29,7 @@ app.use('/', AIperplexityRoutes);
 // Run every day at midnight (00:00)
 
 // Run every day at 20:43 (8:48 PM)--> GMT=+3 = 17:48 GMT
-cron.schedule('06 18 * * *', () => {
+cron.schedule('13 18 * * *', () => {
   console.log('🕐 Running scheduled stock fetch...');
   automaticscript();
 });
