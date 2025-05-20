@@ -38,3 +38,23 @@ if (logoUrl) return logoUrl;
 
 
 
+export const getLogoFromLogoDev2 = async (brand_name) => {
+  try {
+    const response = await fetch("https://api.logo.dev/search?q=sweet", {
+  headers: {
+    "Authorization": `Bearer: .${process.env.LOGODEVPRIVATEKEY}`,
+  }
+})
+    const data = await response.json();
+    console.error('Response', response);
+    if (Array.isArray(data) && data.length > 0 && data[0].logo_url) {
+      return data[0].logo_url;
+    }
+    return null;
+  } catch (error) {
+    console.error('Error fetching brand logo:', error);
+    return null;
+  }
+};
+
+
