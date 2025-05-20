@@ -25,7 +25,7 @@ app.use('/', authRoutes);
 app.use('/', stockFinnhubRoutes);
 app.use('/', AIperplexityRoutes);
 app.use('/', stock_dbRoutes);
-app.use('/run_maintenance', maintenanceRoutes);
+app.use('/', maintenanceRoutes);
 
 
 // Cron job to fetch stocks every day at 00:00

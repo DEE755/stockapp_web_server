@@ -18,7 +18,7 @@ export const getBrandLogo = async (brand_name) => {
 };
 
 
-export const getLogoFromLogoDev = async (tickerSymbol) => {
+export const getLogoFromLogoDev2 = async (tickerSymbol) => {
 try {
 
 const publicToken = process.env.LOGODEVPUBLICKEY;
@@ -38,11 +38,11 @@ if (logoUrl) return logoUrl;
 
 
 
-export const getLogoFromLogoDev2 = async (brand_name) => {
+export const getLogoFromLogoDev = async (brand_name) => {
   try {
     const response = await fetch("https://api.logo.dev/search?q=sweet", {
   headers: {
-    "Authorization": `Bearer: .${process.env.LOGODEVPRIVATEKEY}`,
+    "Authorization": `Bearer: ${process.env.LOGODEVPRIVATEKEY}`,
   }
 })
     const data = await response.json();
