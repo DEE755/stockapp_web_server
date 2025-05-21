@@ -38,20 +38,29 @@ if (logoUrl) return logoUrl;
 
 
 
+//RECUSIVE FUNCTION TO GET LOGO FROM LOGODEV WITH SEVERAL NAME ATTEMPTS
 export const getLogoFromLogoDev = async (brand_name) => {
   try {
-    const response = await fetch("https://api.logo.dev/search?q=sweet", {
+    var length = brand_name.trim().split(/\s+/).length;
+    if (brand_name.trim().length<1) return null;//stop recursion
+
+ const response = await fetch(`https://api.logo.dev/search?q=${brand_name}`, {
   headers: {
     "Authorization": `Bearer: ${process.env.LOGODEVPRIVATEKEY}`,
   }
 })
     const data = await response.json();
-    console.error('Response', response);
+    //console.error('Response', response);
+    console.log('Trying with:',brand_name);
     if (Array.isArray(data) && data.length > 0 && data[0].logo_url) {
       return data[0].logo_url;
     }
-    return null;
-  } catch (error) {
+
+    return await getLogoFromLogoDev(brand_name.split(' ').slice(0, length-1).join(' '))
+      
+     
+}
+   catch (error) {
     console.error('Error fetching brand logo:', error);
     return null;
   }
