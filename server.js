@@ -10,6 +10,8 @@ import stockFinnhubRoutes from './routes/stockFinnhubRoutes.js';
 import AIperplexityRoutes from './routes/askAIPerplexityRoutes.js';
 import stock_dbRoutes from './routes/stock_dbRoutes.js';
 import maintenanceRoutes from './routes/maintenanceRoutes.js';
+import yahooFinancesRoutes from './routes/yahooFinancesRoutes.js';
+
 
 dotenv.config();
 const app = express();
@@ -26,6 +28,7 @@ app.use('/', stockFinnhubRoutes);
 app.use('/', AIperplexityRoutes);
 app.use('/', stock_dbRoutes);
 app.use('/', maintenanceRoutes);
+app.use('/', yahooFinancesRoutes);
 
 
 // Cron job to fetch stocks every day at 00:00
