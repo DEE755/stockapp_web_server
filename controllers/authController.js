@@ -2,18 +2,68 @@ import db from '../services/db.js';
 
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
 
+export const submitForm = async (req, res) => {
+   const { username, password } = req.body;
 
-export const submitForm = (req, res) => {
-  const { username, password } = req.body;
+    if (!username || !password) {
+        return res.status(400).json({ error: 'Username and password are required' });
+    }
+
+    try {
+        // 1. Check if user exists
+        const existing = await loginRequest(username);
+        if (existing) {
+            return res.status(409).json({ error: 'Username already exists' });
+        }
+
+        // 2. Hash password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // 3. Store user
+        const newUserId = await insertUser(username, hashedPassword); // should return user_id
+
+        // 4. Create tokens
+        const accessToken = jwt.sign(
+            { user_id: newUserId },
+            process.env.JWT_SECRET,
+            { expiresIn: '2h' }
+        );
+
+        const refreshToken = jwt.sign(
+            { user_id: newUserId },
+            process.env.REFRESH_SECRET,
+            { expiresIn: '30d' }
+        );
+
+        // 5. Return tokens
+        res.status(201).json({
+            message: 'User created successfully',
+            accessToken,
+            refreshToken
+        });
+
+    } catch (err) {
+        console.error('Signup error:', err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+export const insertUser = async (username, password) => {
   const query = 'INSERT INTO user_login_stocks (username, password) VALUES (?, ?)';
-  db.query(query, [username, password], (err, results) => {
-    if (err) return res.status(500).send('Error saving data');
-    res.status(200).json('Saved!');
+  return new Promise((resolve, reject) => {
+    db.query(query, [username, password], (err, result) => {
+      if (err) return reject(err);
+      resolve(result.insertId); // Return the newly created user ID
+    });
   });
 };
 
-export const loginRequest = (req, res) => {
+
+
+
+export const loginRequest = async(req, res) => {
   const { username, password } = req.query;
   const query = `SELECT * FROM user_login_stocks WHERE username = ? AND password = ?`;
   db.query(query, [username, password], (err, results) => {
@@ -22,6 +72,7 @@ export const loginRequest = (req, res) => {
     res.send(results);
   });
 };
+
 
 
 export const secured_loginRequest = async (req, res) => {
