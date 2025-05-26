@@ -11,6 +11,7 @@ import AIperplexityRoutes from './routes/askAIPerplexityRoutes.js';
 import stock_dbRoutes from './routes/stock_dbRoutes.js';
 import maintenanceRoutes from './routes/maintenanceRoutes.js';
 import yahooFinancesRoutes from './routes/yahooFinancesRoutes.js';
+import userProtectedRouter from './routes/userProtected_dbRoutes.js';
 
 
 dotenv.config();
@@ -29,6 +30,8 @@ app.use('/', AIperplexityRoutes);
 app.use('/', stock_dbRoutes);
 app.use('/', maintenanceRoutes);
 app.use('/', yahooFinancesRoutes);
+
+app.use('/user/protected', userProtectedRouter);
 
 
 // Cron job to fetch stocks every day at 00:00
