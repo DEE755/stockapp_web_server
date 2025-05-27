@@ -103,14 +103,13 @@ export const secured_loginRequest = async (req, res) => {
 
 
 export const getUserFromDb = async (username) => {
-
-  
   const query = `SELECT * FROM user_login_stocks WHERE username = ?`;
-  db.query(query, [username], (err, res) => {
-    if (err) return res.status(500).send('Error');
-    if (!res.length) return res.status(401).send('Invalid');
-    
-    return res[0];
+  return new Promise((resolve, reject) => {
+    db.query(query, [username], (err, results) => {
+      if (err) return reject(err);
+      if (!results.length) return resolve(null);
+      resolve(results[0]);
+    });
   });
 };
 
