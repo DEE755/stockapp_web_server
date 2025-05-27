@@ -14,7 +14,7 @@ export const submitForm = async (req, res) => {
 
     try {
         // 1. Check if user exists
-        const existing = await loginRequest(username);
+        const existing = await getUserFromDb(username);
         if (existing) {
             return res.status(409).json({ error: 'Username already exists' });
         }
@@ -77,6 +77,7 @@ export const loginRequest = async(req, res) => {
 
 
 export const secured_loginRequest = async (req, res) => {
+  console.log('Received login request:');
   const { username, password } = req.query;
 
   try {
