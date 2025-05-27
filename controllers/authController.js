@@ -23,7 +23,7 @@ export const submitForm = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // 3. Store user
-        const newUserId = await insertUser(username, hashedPassword); // should return user_id
+        const newUserId = await insertUser(username/*email instead in the future*/, hashedPassword); // should return user_id
 
         // 4. Create tokens
         const accessToken = jwt.sign(
@@ -42,7 +42,8 @@ export const submitForm = async (req, res) => {
         res.status(201).json({
             message: 'User created successfully',
             accessToken,
-            refreshToken
+            refreshToken,
+          username: username //in the future differentiate between username and email then we will return here the username from db while login with email
         });
 
     } catch (err) {
@@ -56,6 +57,7 @@ export const insertUser = async (username, password) => {
   return new Promise((resolve, reject) => {
     db.query(query, [username, password], (err, res) => {
       if (err) return reject(err);
+      console.log('User inserted with ID:', res.insertId);
       resolve(res.insertId); // Return the newly created user ID
     });
   });
@@ -91,9 +93,24 @@ export const secured_loginRequest = async (req, res) => {
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) return res.status(401).json({ error: 'Invalid credentials' });
 
-    // Generate JWT token with key that we generated in .env file from open SSH
-    const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '2h' });
-    res.json({ token, username: user.username });
+    // Generate tokens
+    const accessToken = jwt.sign(
+      { user_id: user.id },
+      process.env.JWT_SECRET,
+      { expiresIn: '2h' }
+    );
+    const refreshToken = jwt.sign(
+      { user_id: user.id },
+      process.env.REFRESH_SECRET,
+      { expiresIn: '30d' }
+    );
+
+    res.json({
+      message: 'Login successful',
+      accessToken,
+      refreshToken,
+      username: user.username
+    });
   } catch (err) {
     console.error('Error fetching user:', err);
     res.status(500).send('Internal server error');
