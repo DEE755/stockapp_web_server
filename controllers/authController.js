@@ -1,10 +1,11 @@
 import db from '../services/db.js';
-
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+dotenv.config();
 
 export const submitForm = async (req, res) => {
+  console.log('Received signup request:');
    const { username, password } = req.body;
 
     if (!username || !password) {
