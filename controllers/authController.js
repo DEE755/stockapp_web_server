@@ -106,7 +106,7 @@ export const getUserFromDb = async (username) => {
 
   
   const query = `SELECT * FROM user_login_stocks WHERE username = ?`;
-  db.query(query, [username], (err, results) => {
+  db.query(query, [username], (err, res) => {
     if (err) return res.status(500).send('Error');
     if (!results.length) return res.status(401).send('Invalid');
     
