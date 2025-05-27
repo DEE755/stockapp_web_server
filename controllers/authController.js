@@ -54,9 +54,9 @@ export const submitForm = async (req, res) => {
 export const insertUser = async (username, password) => {
   const query = 'INSERT INTO user_login_stocks (username, password) VALUES (?, ?)';
   return new Promise((resolve, reject) => {
-    db.query(query, [username, password], (err, result) => {
+    db.query(query, [username, password], (err, res) => {
       if (err) return reject(err);
-      resolve(result.insertId); // Return the newly created user ID
+      resolve(res.insertId); // Return the newly created user ID
     });
   });
 };
@@ -67,10 +67,10 @@ export const insertUser = async (username, password) => {
 export const loginRequest = async(req, res) => {
   const { username, password } = req.query;
   const query = `SELECT * FROM user_login_stocks WHERE username = ? AND password = ?`;
-  db.query(query, [username, password], (err, results) => {
+  db.query(query, [username, password], (err, res) => {
     if (err) return res.status(500).send('Error');
-    if (!results.length) return res.status(401).send('Invalid');
-    res.send(results);
+    if (!res.length) return res.status(401).send('Invalid');
+    res.send(res);
   });
 };
 
@@ -108,9 +108,9 @@ export const getUserFromDb = async (username) => {
   const query = `SELECT * FROM user_login_stocks WHERE username = ?`;
   db.query(query, [username], (err, res) => {
     if (err) return res.status(500).send('Error');
-    if (!results.length) return res.status(401).send('Invalid');
+    if (!res.length) return res.status(401).send('Invalid');
     
-    return results[0];
+    return res[0];
   });
 };
 
