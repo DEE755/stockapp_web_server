@@ -10,4 +10,6 @@ userProtectedRouter.use(authenticateToken);
 userProtectedRouter.post('/user/follows_stock', (req, res) => userfollowstock(true, req, res));
 userProtectedRouter.post('/user/unfollows_stock', (req, res) => userfollowstock(false, req, res));
 
+
+
 export default userProtectedRouter;
