@@ -1,9 +1,18 @@
 import db from '../services/db.js';
 
-export const fetchallStockDB = (req, res) => {
-  const limit = parseInt(req.query.limit) || 10000; // default 100
+/*export const fetbunchofStockDB = (req, res) => {
+  const limit = parseInt(req.query.limit) || 10000; //getall_remoteDB_stocks?limit=200) several time to avoid too many stocks at once in the client
   const offset = parseInt(req.query.offset) || 0;
   db.query('SELECT * FROM stocks LIMIT ? OFFSET ?', [limit, offset], (err, results) => {
+    if (err) return res.status(500).json({ error: 'Database error' });
+    res.json(results);
+  });
+};*/
+
+export const fetbunchofStockDB = (req, res) => {
+  const limit = parseInt(req.query.limit) || 10000; //getall_remoteDB_stocks?limit=200) several time to avoid too many stocks at once in the client
+  const symbol = parseInt(req.query.symbol) || 0;
+  db.query('SELECT * FROM stocks WHERE symbol > ? ORDER BY symbol LIMIT ?', [symbol,limit], (err, results) => {
     if (err) return res.status(500).json({ error: 'Database error' });
     res.json(results);
   });
@@ -25,6 +34,19 @@ export const userfollowstock = (isFollowing, req, res) => {
       return res.status(500).json({ error: 'Database error' });
     }
     res.json({ success: true, message: isFollowing ? 'Stock followed successfully' : 'Stock unfollowed successfully' });
+  
   });
-}
+};
 
+  export const getNumberOfStocks = (req, res) => {
+    db.query('SELECT COUNT(*) AS count FROM stocks', (err, results) => {
+      if (err) {
+        console.error('Database error:', err);
+        return res.status(500).json({ error: 'Database error' });
+      }
+      res.json({ count: results[0].count });
+  }); 
+  };
+
+
+ 

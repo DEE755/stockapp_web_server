@@ -1,10 +1,12 @@
 import express from 'express';
-import { fetchallStockDB } from '../controllers/stock_dbController.js';
+import { fetbunchofStockDB } from '../controllers/stock_dbController.js';
 import { userfollowstock } from '../controllers/stock_dbController.js';
+import { getNumberOfStocks } from '../controllers/stock_dbController.js';
 
 const router = express.Router();
 
-router.get('/getall_remoteDB_stocks', fetchallStockDB);
+router.get('/getall_remoteDB_stocks', fetbunchofStockDB);
+router.get('/get_number_of_stocks', getNumberOfStocks);
 
 
 export default router;
