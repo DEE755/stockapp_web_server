@@ -1,13 +1,13 @@
 import db from '../services/db.js';
 
-/*export const fetbunchofStockDB = (req, res) => {
+export const fetchallStocksDB = (req, res) => {
   const limit = parseInt(req.query.limit) || 10000; //getall_remoteDB_stocks?limit=200) several time to avoid too many stocks at once in the client
   const offset = parseInt(req.query.offset) || 0;
   db.query('SELECT * FROM stocks LIMIT ? OFFSET ?', [limit, offset], (err, results) => {
     if (err) return res.status(500).json({ error: 'Database error' });
     res.json(results);
   });
-};*/
+};
 
 export const fetbunchofStockDB = (req, res) => {
   const limit = parseInt(req.query.limit) || 10000; //getall_remoteDB_stocks?limit=200) several time to avoid too many stocks at once in the client
