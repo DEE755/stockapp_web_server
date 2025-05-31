@@ -10,7 +10,7 @@ export const fetchallStocksDB = (req, res) => {
 };
 
 export const fetbunchofStockDB = (req, res) => {
-  const limit = parseInt(req.query.limit) || 10000; //getall_remoteDB_stocks?limit=200) several time to avoid too many stocks at once in the client
+  const limit = parseInt(req.query.limit) || 30000; //getall_remoteDB_stocks?limit=200) several time to avoid too many stocks at once in the client
   const symbol = parseInt(req.query.symbol) || 0;
   db.query('SELECT * FROM stocks WHERE symbol > ? ORDER BY symbol LIMIT ?', [symbol,limit], (err, results) => {
     if (err) return res.status(500).json({ error: 'Database error' });
