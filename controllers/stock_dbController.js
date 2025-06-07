@@ -1,7 +1,7 @@
 import db from '../services/db.js';
 
 export const fetchallStocksDB = (req, res) => {
-  const limit = parseInt(req.query.limit) || 30000; //getall_remoteDB_stocks?limit=200) several time to avoid too many stocks at once in the client
+  const limit = parseInt(req.query.limit) || 2000; //getall_remoteDB_stocks?limit=200) several time to avoid too many stocks at once in the client
   const offset = parseInt(req.query.offset) || 0;
   db.query('SELECT * FROM stocks LIMIT ? OFFSET ?', [limit, offset], (err, results) => {
     if (err) return res.status(500).json({ error: 'Database error' });
@@ -12,7 +12,7 @@ export const fetchallStocksDB = (req, res) => {
 export const fetbunchofStockDB = (req, res) => {
   //const limit = parseInt(req.query.limit) || 30000; //getall_remoteDB_stocks?limit=200) several time to avoid too many stocks at once in the client
   const symbol = req.query.symbol || 'A';
-  db.query('SELECT * FROM stocks WHERE symbol > ? ORDER BY symbol', [symbol], (err, results) => {
+  db.query('SELECT * FROM stocks WHERE symbol > ? ORDER BY symbol LIMIT 6000', [symbol], (err, results) => {
     if (err) return res.status(500).json({ error: 'Database error' });
     res.json(results);
   });
