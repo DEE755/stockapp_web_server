@@ -43,7 +43,8 @@ export const submitForm = async (req, res) => {
             message: 'User created successfully',
             accessToken,
             refreshToken,
-          username: username //in the future differentiate between username and email then we will return here the username from db while login with email
+            username: username, //in the future differentiate between username and email then we will return here the username from db while login with email
+            userId: newUserId // Return the user ID for further use
         });
 
     } catch (err) {
@@ -65,16 +66,6 @@ export const insertUser = async (username, password) => {
 
 
 
-
-export const loginRequest = async(req, res) => {
-  const { username, password } = req.query;
-  const query = `SELECT * FROM user_login_stocks WHERE username = ? AND password = ?`;
-  db.query(query, [username, password], (err, res) => {
-    if (err) return res.status(500).send('Error');
-    if (!res.length) return res.status(401).send('Invalid');
-    res.send(res);
-  });
-};
 
 
 
@@ -109,7 +100,8 @@ export const secured_loginRequest = async (req, res) => {
       message: 'Login successful',
       accessToken,
       refreshToken,
-      username: user.username
+      username: user.username,
+      userId: user.id
     });
   } catch (err) {
     console.error('Error fetching user:', err);

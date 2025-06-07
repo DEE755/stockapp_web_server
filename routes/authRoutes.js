@@ -1,5 +1,5 @@
 import express from 'express';
-import { submitForm, loginRequest, secured_loginRequest } from '../controllers/authController.js';
+import { submitForm, secured_loginRequest } from '../controllers/authController.js';
 
 const router = express.Router();
 
