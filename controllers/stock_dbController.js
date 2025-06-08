@@ -54,20 +54,21 @@ export const userfollowstock = (isFollowing, res, userId) => {
 
 
 
-export const getfollowedStocks = async(res, userId) => {
-
-  db.query(
-    'SELECT * FROM stocks JOIN followed_by_user_stocks ON stocks.symbol = followed_by_user_stocks.followed_stock_symbol WHERE followed_by_user_stocks.user_id = ?',
-    [userId],
-    (err, results) => {
-      if (err) {
-        console.error('Database error:', err);
-        return res.status(500).json({ error: 'Database error' });
+export const getfollowedStocks = (userId) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      'SELECT * FROM stocks JOIN followed_by_user_stocks ON stocks.symbol = followed_by_user_stocks.followed_stock_symbol WHERE followed_by_user_stocks.user_id = ?',
+      [userId],
+      (err, results) => {
+        if (err) {
+          console.error('Database error:', err);
+          return reject(err);
+        }
+        // Return the list of followed stock symbols as array
+        resolve(results);
       }
-      // Return the list of followed stock symbols as array
-      return results.map(stock => stock.symbol);
-    }
-  );
+    );
+  });
 };
 
 
@@ -83,14 +84,18 @@ export const getfollowedStocks = async(res, userId) => {
   };
 
     //run at app launch
-
     export const fetchUpdateMovingAveragesForUser = async(res, userId) => {
       //const userId = req.query.userId;
-      const results = await getfollowedStocks(res, userId);
-      for (let i = 0; i < results.length; i++) {
-        getAllMovingAverages(results[i]);
+      try {
+        const results = await getfollowedStocks(userId);
+        for (let i = 0; i < results.length; i++) {
+          getAllMovingAverages(results[i]);
+        }
+        res.json(results);
+      } catch (err) {
+        console.error('Database error:', err);
+        res.status(500).json({ error: 'Database error' });
       }
-      res.json(results);
     };
 
       export const getUpdateForFollowedStocksMA = async (req, userId ) => {
