@@ -1,29 +1,36 @@
 import yahooFinance from 'yahoo-finance2';
 import db from '../services/db.js'; // your mysql connection
 
-export async function getCurrentPrice(symbol) {// this function will be live used and not only put in the db like the other ones for faster access
+export const getCurrentPrice = async (symbol) => {
   try {
     console.log("Fetching current price for symbol:", symbol);
     const quote = await yahooFinance.quote(symbol);
- 
-   
-    const price = quote.regularMarketPrice
+    const price = quote.regularMarketPrice;
+
     if (price) {
       console.log(`Current price for ${symbol}:`, price);
-      db.query(`UPDATE stocks SET current_price = ? WHERE symbol = ?`, [price, symbol], (err) => {
-        if (err) {
-          console.error('Error updating current price:', err);
-          console.log('Failed to update price for symbol:', symbol);
-        }
+      // Await the DB update
+      await new Promise((resolve, reject) => {
+        db.query(
+          `UPDATE stocks SET current_price = ? WHERE symbol = ?`,
+          [price, symbol],
+          (err) => {
+            if (err) {
+              console.error('Error updating current price:', err);
+              console.log('Failed to update price for symbol:', symbol);
+              return reject(err);
+            }
+            resolve();
+          }
+        );
       });
     }
     return price;
-
   } catch (error) {
     console.error('Error fetching current price for', symbol, error.message);
     return null;
   }
-}
+};
 
 export async function yahooGetFourMovingAverages(symbol) {
   try {
@@ -67,4 +74,4 @@ export async function yahooGetFourMovingAverages(symbol) {
     return null;
   }
 }
-  
+

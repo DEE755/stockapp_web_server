@@ -73,12 +73,12 @@ export const getfollowedStocks = (userId) => {
 
 
 //run every 30 seconds
-  export const fetchUpdatePricesForUser = async(res, userId) => {
+  export const fetchUpdatePricesForUser = async(userId) => {
     //const userId = req.query.userId;
 
     const results = await getfollowedStocks(userId);
     for (let i = 0; i < results.length; i++) {
-      getCurrentPrice(results[i]);
+      await getCurrentPrice(results[i]);
     }
   };
 
@@ -98,7 +98,7 @@ export const getfollowedStocks = (userId) => {
 
       export const getUpdateForFollowedStocksMA = async (req, userId ) => {
 
-      await fetchUpdatePricesForUser(req, userId);
+      await fetchUpdatePricesForUser(userId);
         const results = await getfollowedStocks(userId);
         const prices = results.map(stock => {
           return {
@@ -114,7 +114,7 @@ export const getfollowedStocks = (userId) => {
       }
 
       export const getUpdateForFollowedStocksPR = async (res, userId ) => {
-        await fetchUpdatePricesForUser(res, userId);
+        await fetchUpdatePricesForUser(userId);
         const results = await getfollowedStocks(userId);
         const prices = results.map(stock => {
           return {
