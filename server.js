@@ -31,7 +31,7 @@ app.use('/', stock_dbRoutes);
 app.use('/', maintenanceRoutes);
 app.use('/', yahooFinancesRoutes);
 
-app.use('/', userProtectedRouter);
+app.use('/user', userProtectedRouter);
 
 
 // Cron job to fetch stocks every day at 00:00
