@@ -80,7 +80,6 @@ export const getfollowedStocks = (userId) => {
     for (let i = 0; i < results.length; i++) {
       getCurrentPrice(results[i]);
     }
-    res.json(results);
   };
 
     //run at app launch
@@ -91,7 +90,6 @@ export const getfollowedStocks = (userId) => {
         for (let i = 0; i < results.length; i++) {
           getAllMovingAverages(results[i]);
         }
-        res.json(results);
       } catch (err) {
         console.error('Database error:', err);
         res.status(500).json({ error: 'Database error' });
