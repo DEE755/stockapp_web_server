@@ -19,7 +19,7 @@ userProtectedRouter.get('/get_update_for_followed_stocksMA', (req, res) => {
     getUpdateForFollowedStocksMA(res, userId);
 });
 
-userProtectedRouter.get('/get_update_for_followed_stocksPR', (res) => {
+userProtectedRouter.get('/get_update_for_followed_stocksPR', (req,res) => {
     const userId = req.user.user_id;
     getUpdateForFollowedStocksPR(res, userId);
 });
