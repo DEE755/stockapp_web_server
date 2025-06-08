@@ -116,7 +116,7 @@ export const getfollowedStocks = (userId) => {
       }
 
       export const getUpdateForFollowedStocksPR = async (res, userId ) => {
-
+        await fetchUpdatePricesForUser(res, userId);
         const results = await getfollowedStocks(userId);
         const prices = results.map(stock => {
           return {
