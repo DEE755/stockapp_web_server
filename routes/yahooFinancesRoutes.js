@@ -20,6 +20,6 @@ router.get('/get_current_price', async (req, res) => {
 
 
 
-router.get('/update_ma', yahooGetFourMovingAverages)//should be run every day for follwed only
+router.get('/update_ma', yahooGetFourMovingAverages)
 
 export default router;

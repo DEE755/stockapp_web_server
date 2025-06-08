@@ -1,4 +1,6 @@
+import { getAllMovingAverages } from '../cron/automaticStockFetching.js';
 import db from '../services/db.js';
+import { getCurrentPrice } from '../controllers/yahooFinancesController.js';
 
 export const fetchallStocksDB = (req, res) => {
   const limit = parseInt(req.query.limit) || 2000; //getall_remoteDB_stocks?limit=200) several time to avoid too many stocks at once in the client
@@ -18,8 +20,8 @@ export const fetbunchofStockDB = (req, res) => {
   });
 };
 
-export const userfollowstock = (isFollowing, req, res) => {
-  const { userId, stockSymbol } = req.body;
+export const userfollowstock = (isFollowing, req, res, userId) => {
+  //const { userId, stockSymbol } = req.body;
   if (!userId || !stockSymbol) {
     return res.status(400).json({ error: 'Missing userId or stockSymbol' });
   }
@@ -49,4 +51,72 @@ export const userfollowstock = (isFollowing, req, res) => {
   };
 
 
- 
+
+export const getfollowedStocks = async(userId,res) => {
+
+  db.query(
+    'SELECT * FROM stocks JOIN followed_by_user_stocks ON stocks.symbol = followed_by_user_stocks.followed_stock_symbol WHERE followed_by_user_stocks.user_id = ?',
+    [userId],
+    (err, results) => {
+      if (err) {
+        console.error('Database error:', err);
+        return res.status(500).json({ error: 'Database error' });
+      }
+      // Return the list of followed stock symbols as array
+      return results.map(stock => stock.symbol);
+    }
+  );
+};
+
+
+//run every 30 seconds
+  export const fetchUpdatePricesForUser = async(req, res) => {
+    const userId = req.query.userId;
+
+    const results = await getfollowedStocks(req, res);
+    for (let i = 0; i < results.length; i++) {
+      getCurrentPrice(results[i]);
+    }
+    res.json(results);
+  };
+
+    //run at app launch
+
+    export const fetchUpdateMovingAveragesForUser = async(req, res) => {
+      const userId = req.query.userId;
+      const results = await getfollowedStocks(req, res);
+      for (let i = 0; i < results.length; i++) {
+        getAllMovingAverages(results[i]);
+      }
+      res.json(results);
+    };
+
+      export const getUpdateForFollowedStocksMA = async (req, userId ) => {
+
+      
+        const results = await getfollowedStocks(req, userId);
+        const prices = results.map(stock => {
+          return {
+            symbol: stock.symbol,
+            ma_25: stock.ma_25,
+            ma_50: stock.ma_50,
+            ma_150: stock.ma_150,
+            ma_200: stock.ma_200
+          };
+        });
+        res.json(prices);
+
+      }
+
+      export const getUpdateForFollowedStocksPR = async (req, userId ) => {
+
+        const results = await getfollowedStocks(req, userId);
+        const prices = results.map(stock => {
+          return {
+            symbol: stock.symbol,
+            current_price: stock.current_price
+          };
+        });
+        res.json(prices);
+
+      }

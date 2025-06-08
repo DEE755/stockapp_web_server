@@ -1,7 +1,5 @@
 import express from 'express';
-import { fetbunchofStockDB } from '../controllers/stock_dbController.js';
-import { fetchallStocksDB } from '../controllers/stock_dbController.js';
-import { getNumberOfStocks } from '../controllers/stock_dbController.js';
+import { fetbunchofStockDB, fetchallStocksDB, getNumberOfStocks } from '../controllers/stock_dbController.js';
 
 const router = express.Router();
 

@@ -45,9 +45,9 @@ export const AllStockFetching = async () => {
   }
 };
 
-
+//only for stocks that are followed by users
 export const getAllMovingAverages = async () => {
-  db.query(`SELECT * FROM stocks`, async (err, results) => {
+  db.query(`SELECT * FROM stocks JOIN followed_by_user_stocks as fbs ON stocks.symbol = fbs.followed_stock_symbol`, async (err, results) => {
     if (err) {
       console.error('Error fetching stocks:', err);
       return;

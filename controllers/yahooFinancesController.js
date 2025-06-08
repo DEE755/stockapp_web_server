@@ -5,8 +5,15 @@ export async function getCurrentPrice(symbol) {// this function will be live use
     const quote = await yahooFinance.quote(symbol);
     // The current price is usually in 'regularMarketPrice'
     
-    return quote.regularMarketPrice;
-
+    const price = quote.regularMarketPrice
+    if (price) {
+      db.query(`UPDATE stocks SET current_price = ? WHERE symbol = ?`, [price, symbol], (err) => {
+        if (err) {
+          console.error('Error updating current price:', err);
+        }
+      });
+    }
+    return price;
 
   } catch (error) {
     console.error('Error fetching current price for', symbol, error.message);
