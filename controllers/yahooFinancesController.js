@@ -1,11 +1,12 @@
 import yahooFinance from 'yahoo-finance2';
+import db from '../services/db.js'; // your mysql connection
 
 export async function getCurrentPrice(symbol) {// this function will be live used and not only put in the db like the other ones for faster access
   try {
     console.log("Fetching current price for symbol:", symbol);
     const quote = await yahooFinance.quote(symbol);
-    // The current price is usually in 'regularMarketPrice'
-    
+ 
+   
     const price = quote.regularMarketPrice
     if (price) {
       console.log(`Current price for ${symbol}:`, price);
