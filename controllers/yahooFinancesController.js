@@ -2,14 +2,17 @@ import yahooFinance from 'yahoo-finance2';
 
 export async function getCurrentPrice(symbol) {// this function will be live used and not only put in the db like the other ones for faster access
   try {
+    console.log("Fetching current price for symbol:", symbol);
     const quote = await yahooFinance.quote(symbol);
     // The current price is usually in 'regularMarketPrice'
     
     const price = quote.regularMarketPrice
     if (price) {
+      console.log(`Current price for ${symbol}:`, price);
       db.query(`UPDATE stocks SET current_price = ? WHERE symbol = ?`, [price, symbol], (err) => {
         if (err) {
           console.error('Error updating current price:', err);
+          console.log('Failed to update price for symbol:', symbol);
         }
       });
     }
