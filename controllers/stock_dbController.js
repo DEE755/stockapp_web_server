@@ -78,7 +78,7 @@ export const getfollowedStocks = (userId) => {
 
     const results = await getfollowedStocks(userId);
     for (let i = 0; i < results.length; i++) {
-      await getCurrentPrice(results[i]);
+      await getCurrentPrice(results[i].symbol);
     }
   };
 
