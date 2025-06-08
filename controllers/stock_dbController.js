@@ -22,7 +22,7 @@ export const fetbunchofStockDB = (req, res) => {
   });
 };
 
-export const userfollowstock = (isFollowing, res, req, userId) => {
+export const userfollowstock = (isFollowing, req, res, userId) => {
   const stockSymbol = req.body.stockSymbol;
   if (!userId || !stockSymbol) {
     return res.status(400).json({ error: 'Missing userId or stockSymbol' });

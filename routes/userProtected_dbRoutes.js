@@ -9,7 +9,7 @@ userProtectedRouter.use(authenticateToken);
 
 userProtectedRouter.post('/follows_stock', (req, res) => {
     const userId = req.user.user_id;
-    userfollowstock(true, res, req, userId);
+    userfollowstock(true, req, res, userId);
 });
 
 userProtectedRouter.post('/unfollows_stock', (req, res) => userfollowstock(false, res, req, userId));
