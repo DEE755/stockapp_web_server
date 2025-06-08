@@ -7,12 +7,12 @@ const userProtectedRouter = express.Router();
 
 userProtectedRouter.use(authenticateToken);
 
-userProtectedRouter.post('/user/follows_stock', (req, res) => {
+userProtectedRouter.post('/follows_stock', (req, res) => {
     const userId = req.user.user_id;
     userfollowstock(true, req, res, userId);
 });
 
-userProtectedRouter.post('/user/unfollows_stock', (req, res) => userfollowstock(false, req, res, userId));
+userProtectedRouter.post('/unfollows_stock', (req, res) => userfollowstock(false, req, res, userId));
 
 userProtectedRouter.get('/get_update_for_followed_stocksMA', (req, res) => {
     const userId = req.user.user_id;

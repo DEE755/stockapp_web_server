@@ -11,6 +11,8 @@ export const fetchallStocksDB = (req, res) => {
   });
 };
 
+
+
 export const fetbunchofStockDB = (req, res) => {
   //const limit = parseInt(req.query.limit) || 30000; //getall_remoteDB_stocks?limit=200) several time to avoid too many stocks at once in the client
   const symbol = req.query.symbol || 'A';
@@ -20,7 +22,7 @@ export const fetbunchofStockDB = (req, res) => {
   });
 };
 
-export const userfollowstock = (isFollowing, req, res, userId) => {
+export const userfollowstock = (isFollowing, res, userId) => {
   //const { userId, stockSymbol } = req.body;
   if (!userId || !stockSymbol) {
     return res.status(400).json({ error: 'Missing userId or stockSymbol' });
@@ -52,7 +54,7 @@ export const userfollowstock = (isFollowing, req, res, userId) => {
 
 
 
-export const getfollowedStocks = async(userId,res) => {
+export const getfollowedStocks = async(res, userId) => {
 
   db.query(
     'SELECT * FROM stocks JOIN followed_by_user_stocks ON stocks.symbol = followed_by_user_stocks.followed_stock_symbol WHERE followed_by_user_stocks.user_id = ?',
@@ -70,10 +72,10 @@ export const getfollowedStocks = async(userId,res) => {
 
 
 //run every 30 seconds
-  export const fetchUpdatePricesForUser = async(req, res) => {
-    const userId = req.query.userId;
+  export const fetchUpdatePricesForUser = async(res, userId) => {
+    //const userId = req.query.userId;
 
-    const results = await getfollowedStocks(req, res);
+    const results = await getfollowedStocks(res, userId);
     for (let i = 0; i < results.length; i++) {
       getCurrentPrice(results[i]);
     }
@@ -82,9 +84,9 @@ export const getfollowedStocks = async(userId,res) => {
 
     //run at app launch
 
-    export const fetchUpdateMovingAveragesForUser = async(req, res) => {
-      const userId = req.query.userId;
-      const results = await getfollowedStocks(req, res);
+    export const fetchUpdateMovingAveragesForUser = async(res, userId) => {
+      //const userId = req.query.userId;
+      const results = await getfollowedStocks(res, userId);
       for (let i = 0; i < results.length; i++) {
         getAllMovingAverages(results[i]);
       }
@@ -93,7 +95,7 @@ export const getfollowedStocks = async(userId,res) => {
 
       export const getUpdateForFollowedStocksMA = async (req, userId ) => {
 
-      
+      await fetchUpdatePricesForUser(req, userId);
         const results = await getfollowedStocks(req, userId);
         const prices = results.map(stock => {
           return {
