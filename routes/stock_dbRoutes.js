@@ -1,6 +1,6 @@
 import express from 'express';
 import { fetbunchofStockDB, fetchallStocksDB, getNumberOfStocks } from '../controllers/stock_dbController.js';
-import {getCurrentPrice} from '../controllers/alphawantageController.js';
+
 const router = express.Router();
 
 router.get('/getall_remoteDB_stocks', fetchallStocksDB);
