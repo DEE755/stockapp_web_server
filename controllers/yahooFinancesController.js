@@ -1,5 +1,5 @@
 import yahooFinance from 'yahoo-finance2';
-import db from '../services/db.js'; // your mysql connection
+import db from '../services/db.js'; 
 
 export const getCurrentPrice = async (symbol) => {
   try {

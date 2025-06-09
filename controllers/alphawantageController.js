@@ -2,7 +2,7 @@ import fetch from 'node-fetch';
 
 export const getCurrentPrice = (symbol) => {
   return new Promise((resolve, reject) => {
-    const url = 'https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=' + symbol + '&interval=1min&apikey=' + process.env.ALPHAWANTAGE_KEY;
+    const url = 'https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=' + symbol + '&interval=5min&apikey=' + process.env.ALPHAWANTAGE_KEY;
 
     fetch(url)
       .then(response => {
