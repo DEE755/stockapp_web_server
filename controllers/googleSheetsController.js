@@ -1,36 +1,39 @@
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
+import { google } from 'googleapis';
 import db from '../services/db.js';
 
-import fs from 'fs';
-const keys = JSON.parse(fs.readFileSync(new URL('../stockapp-462411-e706a77a0817.json', import.meta.url)));
+// Utilitaire pour __dirname (ES modules)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-import { google } from 'googleapis';
+// Chemin du fichier de credentials
+const keyPath = path.join(__dirname, '../stockapp-462411-e706a77a0817.json');
 
-
-const spreadsheetId = process.env.GOOGLE_SPREADSHEET_ID; 
-
-const auth = new google.auth.JWT(
-  keys.client_email,
-  null,
-  keys.private_key,
-  ['https://www.googleapis.com/auth/spreadsheets']
-);
-
-async function createAndSetupSheet() {
-  const sheets = google.sheets({ version: 'v4', auth });
-
-   // 1. Create new spreadsheet
-  await sheets.spreadsheets.create({
-    resource: {
-      properties: { title: 'My Stock Tracker' },
-      sheets: [{
-        properties: { title: 'Stocks' }
-      }]
-    }
-  });
-}
-
-  const sheetName = 'Stocks';
+const spreadsheetId = process.env.GOOGLE_SPREADSHEET_ID;
+const sheetName = 'Stocks';
 const SHEET_RANGE = `${sheetName}!A2:B`; // A = symbol, B = price
+
+let sheetsClient = null;
+let auth = null;
+
+async function getSheetsClient() {
+  if (sheetsClient) return sheetsClient;
+
+  const keys = JSON.parse(fs.readFileSync(keyPath, 'utf8'));
+
+  auth = new google.auth.JWT(
+    keys.client_email,
+    null,
+    keys.private_key.replace(/\\n/g, '\n'), // 🔑 Correction des retours à la ligne
+    ['https://www.googleapis.com/auth/spreadsheets']
+  );
+
+  await auth.authorize();
+  sheetsClient = google.sheets({ version: 'v4', auth });
+  return sheetsClient;
+}
 
 async function getSheetRows(sheets) {
   const res = await sheets.spreadsheets.values.get({
@@ -40,7 +43,6 @@ async function getSheetRows(sheets) {
   return res.data.values || [];
 }
 
-
 async function appendNewSymbols(sheets, inputStocks) {
   const existing = await getSheetRows(sheets);
   const existingSymbols = new Set(existing.map(row => row[0]));
@@ -49,10 +51,10 @@ async function appendNewSymbols(sheets, inputStocks) {
 
   if (filteredInputStocks.length === 0) return;
 
-const newRows = filteredInputStocks.map(stock => [
+  const newRows = filteredInputStocks.map(stock => [
     stock.symbol,
     `=GOOGLEFINANCE("${stock.symbol}", "price")`
-]);
+  ]);
 
   await sheets.spreadsheets.values.append({
     spreadsheetId,
@@ -63,57 +65,52 @@ const newRows = filteredInputStocks.map(stock => [
 }
 
 async function readPrices(sheets, inputStocks) {
-    const allRows = await getSheetRows(sheets);
-    const prices = {};
-    const inputSymbols = inputStocks.map(stock => stock.symbol);
-    for (const [symbol, price] of allRows) {
-        if (inputSymbols.includes(symbol)) {
-            prices[symbol] = price;
-        }
+  const allRows = await getSheetRows(sheets);
+  const prices = {};
+  const inputSymbols = inputStocks.map(stock => stock.symbol);
+  for (const [symbol, price] of allRows) {
+    if (inputSymbols.includes(symbol)) {
+      prices[symbol] = price;
     }
-    return prices;
+  }
+  return prices;
 }
 
 export async function googleSheetProcess(stocks) {
-  await auth.authorize();
-  const sheets = google.sheets({ version: 'v4', auth });
+  try {
+    const sheets = await getSheetsClient();
+    await appendNewSymbols(sheets, stocks);
 
-  await appendNewSymbols(sheets, stocks);
+    console.log('Waiting 60 seconds for price data to populate...');
+    await new Promise(r => setTimeout(r, 60000));
 
-  // Wait for GOOGLEFINANCE formulas to populate
-  console.log('Waiting 60 seconds for price data to populate...');
-  await new Promise(r => setTimeout(r, 60000));
+    const prices = await readPrices(sheets, stocks);
 
-  const prices = await readPrices(sheets, stocks);
-for (const stock of stocks) {
-    const symbol = stock.symbol;
-    const price = prices[symbol];
-    console.log(`${symbol}: $${price}`);
-    if (price) {
-      try {
-        console.log(`Current price for ${symbol}:`, price);
-        // Await the DB update
-        await new Promise((resolve, reject) => {
-          db.query(
-            `UPDATE stocks SET current_price = ? WHERE symbol = ?`,
-            [price, symbol],
-            (err) => {
-              if (err) {
-                console.error('Error updating current price:', err);
-                console.log('Failed to update price for symbol:', symbol);
-                return reject(err);
+    for (const stock of stocks) {
+      const symbol = stock.symbol;
+      const price = prices[symbol];
+      console.log(`${symbol}: $${price}`);
+      if (price) {
+        try {
+          await new Promise((resolve, reject) => {
+            db.query(
+              `UPDATE stocks SET current_price = ? WHERE symbol = ?`,
+              [price, symbol],
+              (err) => {
+                if (err) {
+                  console.error('Error updating current price:', err);
+                  return reject(err);
+                }
+                resolve();
               }
-              resolve();
-            }
-          );
-        });
-      } catch (error) {
-        console.error('Error fetching current price for', symbol, error.message);
-        return null;
+            );
+          });
+        } catch (error) {
+          console.error('Error updating DB for', symbol, error.message);
+        }
       }
     }
-    // Optionally: return price or collect results if needed
+  } catch (err) {
+    console.error('Error in googleSheetProcess:', err.message);
   }
-  // res.json({ symbol, price }); // Remove or adapt as needed for your use case
 }
-
