@@ -1,4 +1,4 @@
-import path from 'path';
+/*import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { google } from 'googleapis';
@@ -114,3 +114,4 @@ export async function googleSheetProcess(stocks) {
     console.error('Error in googleSheetProcess:', err.message);
   }
 }
+*/

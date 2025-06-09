@@ -1,8 +1,9 @@
 import { getAllMovingAverages } from '../cron/automaticStockFetching.js';
 import db from '../services/db.js';
 import { getCurrentPrice as oldgetCurrentPrice }  from '../controllers/yahooFinancesController.js'; 
+import { setRandomFallback } from 'bcryptjs';
 
-import { googleSheetProcess } from './googleSheetsController.js';
+//import { googleSheetProcess } from './googleSheetsController.js';
 export const fetchallStocksDB = (req, res) => {
   const limit = parseInt(req.query.limit) || 2000; //getall_remoteDB_stocks?limit=200) several time to avoid too many stocks at once in the client
   const offset = parseInt(req.query.offset) || 0;
@@ -72,19 +73,23 @@ export const getfollowedStocks = (userId) => {
   });
 };
 
-
+//MOCK FUNCTION BECAUSE API FOR FETCHING PRICES COST $$$$$$$, REPLACE WITH REAL API CALLS IN THE PRODUCTION
+export const getCurrentPrice = async (symbol) => {
+  // Return a random mock price between 10 and 500 for testing
+  return { symbol, price: (Math.random() * (500 - 10) + 10).toFixed(2) };
+};
 //run every 30 seconds
   export const fetchUpdatePricesForUser = async(userId) => {
     //const userId = req.query.userId;
 
     const results = await getfollowedStocks(userId);
 
-    googleSheetProcess(results);
+    //googleSheetProcess(results);
 
 
-    /*for (let i = 0; i < results.length; i++) {
+    for (let i = 0; i < results.length; i++) {
       await getCurrentPrice(results[i].symbol); //replace with new function
-    }*/
+    }
 
 
   };
