@@ -2,7 +2,7 @@ import { getAllMovingAverages } from '../cron/automaticStockFetching.js';
 import db from '../services/db.js';
 import { getCurrentPrice as oldgetCurrentPrice }  from '../controllers/yahooFinancesController.js'; 
 import { getCurrentPrice } from './alphawantageController.js';
-
+import { googleSheetProcess } from './googleSheetsController.js';
 export const fetchallStocksDB = (req, res) => {
   const limit = parseInt(req.query.limit) || 2000; //getall_remoteDB_stocks?limit=200) several time to avoid too many stocks at once in the client
   const offset = parseInt(req.query.offset) || 0;
@@ -78,9 +78,15 @@ export const getfollowedStocks = (userId) => {
     //const userId = req.query.userId;
 
     const results = await getfollowedStocks(userId);
-    for (let i = 0; i < results.length; i++) {
-      await getCurrentPrice(results[i].symbol);
-    }
+
+    googleSheetProcess(results);
+
+
+    /*for (let i = 0; i < results.length; i++) {
+      await getCurrentPrice(results[i].symbol); //replace with new function
+    }*/
+
+
   };
 
     //run at app launch
@@ -116,7 +122,9 @@ export const getfollowedStocks = (userId) => {
 
       export const getUpdateForFollowedStocksPR = async (res, userId ) => {
         await fetchUpdatePricesForUser(userId);
+
         const results = await getfollowedStocks(userId);
+
         const prices = results.map(stock => {
           return {
             symbol: stock.symbol,
