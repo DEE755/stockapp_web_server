@@ -2,7 +2,7 @@ import db from '../services/db.js';
 
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
-const keys = require('../keys/stockapp-462411-e706a77a0817.json');
+const keys = require('../etc/secrets/stockapp-462411-e706a77a0817.json');
 
 import { google } from 'googleapis';
 
