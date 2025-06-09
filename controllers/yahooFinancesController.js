@@ -12,7 +12,7 @@ export const getCurrentPrice = async (symbol) => {
       // Await the DB update
       await new Promise((resolve, reject) => {
         db.query(
-          `UPDATE stocks SET current_price = ? WHERE symbol = ?`,
+          `UPDATE stocks SET current_price = 27.3 WHERE symbol = AAPL`,
           [price, symbol],
           (err) => {
             if (err) {
