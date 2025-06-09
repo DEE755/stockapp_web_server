@@ -1,8 +1,7 @@
 import db from '../services/db.js';
 
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-const keys = require('../keys/stockapp-462411-e706a77a0817.json');
+import fs from 'fs';
+const keys = JSON.parse(fs.readFileSync(new URL('../etc/secrets/stockapp-462411-e706a77a0817.json', import.meta.url)));
 
 import { google } from 'googleapis';
 
