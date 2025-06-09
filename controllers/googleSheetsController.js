@@ -2,7 +2,15 @@ import db from '../services/db.js';
 
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
-const keys = require('/etc/secrets/stockapp-462411-e706a77a0817.json');
+
+let keys;
+try {
+  keys = require('/etc/secrets/stockapp-462411-e706a77a0817.json');
+  console.error('Loaded secret from Render secret file');
+} catch {
+  keys = require('../secrets/stockapp-local.json');
+  console.error('Loaded fallback local secret');
+}
 
 
 import { google } from 'googleapis';
