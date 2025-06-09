@@ -1,7 +1,7 @@
 import { getAllMovingAverages } from '../cron/automaticStockFetching.js';
 import db from '../services/db.js';
 import { getCurrentPrice as oldgetCurrentPrice }  from '../controllers/yahooFinancesController.js'; 
-import { getCurrentPrice } from './alphawantageController.js';
+
 import { googleSheetProcess } from './googleSheetsController.js';
 export const fetchallStocksDB = (req, res) => {
   const limit = parseInt(req.query.limit) || 2000; //getall_remoteDB_stocks?limit=200) several time to avoid too many stocks at once in the client

@@ -1,7 +1,11 @@
 import db from '../services/db.js';
 
-const keys = require('./../stockapp-462411-e706a77a0817.json');
-const { google } = require('googleapis');
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const keys = require('../keys/stockapp-462411-e706a77a0817.json');
+
+import { google } from 'googleapis';
+
 
 const spreadsheetId = process.env.GOOGLE_SPREADSHEET_ID; 
 
@@ -24,6 +28,7 @@ async function createAndSetupSheet() {
       }]
     }
   });
+}
 
   const sheetName = 'Stocks';
 const SHEET_RANGE = `${sheetName}!A2:B`; // A = symbol, B = price
@@ -35,7 +40,7 @@ async function getSheetRows(sheets) {
   });
   return res.data.values || [];
 }
-}
+
 
 async function appendNewSymbols(sheets, inputStocks) {
   const existing = await getSheetRows(sheets);
@@ -70,7 +75,7 @@ async function readPrices(sheets, inputStocks) {
     return prices;
 }
 
-async function googleSheetProcess(stocks) {
+export async function googleSheetProcess(stocks) {
   await auth.authorize();
   const sheets = google.sheets({ version: 'v4', auth });
 
