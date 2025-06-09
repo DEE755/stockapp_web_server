@@ -75,16 +75,29 @@ export const getfollowedStocks = (userId) => {
 
 //MOCK FUNCTION BECAUSE API FOR FETCHING PRICES COST $$$$$$$, REPLACE WITH REAL API CALLS IN THE PRODUCTION
 export const getCurrentPrice = async (symbol) => {
+
+  const mock_value= (Math.random() * (500 - 10) + 10).toFixed(2); // Mock price between 10 and 500
+  
+  db.query(
+    'UPDATE stocks SET current_price = ? WHERE symbol = ?',
+    [mock_value, symbol], // Mock price between 10 and 500
+    (err) => {
+      if (err) {
+        console.error('Error updating current price:', err);
+        return;
+      }
+      console.log(`Updated current price for ${symbol}`);
+    }
+  );
   // Return a random mock price between 10 and 500 for testing
-  return { symbol, price: (Math.random() * (500 - 10) + 10).toFixed(2) };
+  return { symbol, price: mock_value };
+
 };
 //run every 30 seconds
   export const fetchUpdatePricesForUser = async(userId) => {
     //const userId = req.query.userId;
 
     const results = await getfollowedStocks(userId);
-
-    //googleSheetProcess(results);
 
 
     for (let i = 0; i < results.length; i++) {
