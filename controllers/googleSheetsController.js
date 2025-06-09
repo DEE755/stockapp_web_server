@@ -1,7 +1,7 @@
 import db from '../services/db.js';
 
 import fs from 'fs';
-const keys = JSON.parse(fs.readFileSync(new URL('../etc/secrets/stockapp-462411-e706a77a0817.json', import.meta.url)));
+const keys = JSON.parse(fs.readFileSync(new URL('../stockapp-462411-e706a77a0817.json', import.meta.url)));
 
 import { google } from 'googleapis';
 

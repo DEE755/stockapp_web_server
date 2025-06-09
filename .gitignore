@@ -8,6 +8,10 @@ node_modules/
 keys/*
 etc/secrets/*
 
+stockapp-462411-e706a77a0817.json
+
+
+
 # Logs
 logs/
 *.log
