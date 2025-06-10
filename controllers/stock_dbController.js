@@ -121,7 +121,7 @@ export const getCurrentPrice = async (symbol) => {
       }
     };
 
-      export const getUpdateForFollowedStocksMA = async (req, userId ) => {
+      export const getUpdateForFollowedStocksMA = async (res, userId ) => {
 
       await fetchUpdatePricesForUser(userId);
         const results = await getfollowedStocks(userId);
