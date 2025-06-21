@@ -57,12 +57,12 @@ const linkStocksAndFollowset = (req, res, userId) => { //creates the relationshi
 }
 
  const setUserFollowsSet = (req, res, userId) => { //set that the user follows a followset
-  const followset = req.body.followset;
-  if (!userId || !followset) {
-    return res.status(400).json({ error: 'Missing userId or followset' });
+  
+  if (!userId) {
+    return res.status(400).json({ error: 'Missing userId' });
   }
 
-  const { name, image_uri, user_description, notifications_prices, id } = followset;
+  const { name, image_uri, user_description, notifications_prices, id } = req.body;
 
   const query = "INSERT INTO followset (name, image_uri, user_description, notifications_prices, id, user_id) VALUES (?, ?, ?, ?, ?, ?)";
   db.query(query, [name, image_uri, user_description, notifications_prices, id, userId], (err, result) => {
