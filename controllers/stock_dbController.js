@@ -24,6 +24,114 @@ export const fetbunchofStockDB = (req, res) => {
   });
 };
 
+
+const linkStocksAndFollowset = (req, res, userId) => { //creates the relationship between followset and stocks (nedded when creating a new followset)
+  return new Promise((resolve, reject) => {
+    const followsetId = req.body.followsetId;
+    const allstockSymbols = req.body.stockSymbols; // Array of stock symbols to link
+
+    const query_pattern = "INSERT INTO followset_stocks (followset_id, user_id, stock_symbol) VALUES (?, ?, ?)";
+    let completed = 0;
+    let hasError = false;
+
+    if (!Array.isArray(allstockSymbols) || allstockSymbols.length === 0) {
+      resolve();
+      return;
+    }
+
+    for (const stockSymbol of allstockSymbols) {
+      db.query(query_pattern, [followsetId, userId, stockSymbol], (err) => {
+        if (hasError) return;
+        if (err) {
+          hasError = true;
+          reject(err);
+          return;
+        }
+        completed++;
+        if (completed === allstockSymbols.length) {
+          resolve();
+        }
+      });
+    }
+  });
+}
+
+ const setUserFollowsSet = (req, res, userId) => { //set that the user follows a followset
+  const followset = req.body.followset;
+  if (!userId || !followset) {
+    return res.status(400).json({ error: 'Missing userId or followset' });
+  }
+
+  const { name, image_uri, user_description, notifications_prices, id } = followset;
+
+  const query = "INSERT INTO followset (name, image_uri, user_description, notifications_prices, id, user_id) VALUES (?, ?, ?, ?, ?, ?)";
+  db.query(query, [name, image_uri, user_description, notifications_prices, id, userId], (err, result) => {
+    if (err) {
+      console.error('Database error:', err);
+      return res.status(500).json({ error: 'Database error' });
+    }
+    
+  });
+};
+
+
+//we can separate the logic of creating a followset and when a user follows it.
+
+export const addNewFollowsettoDB = async (req, res, userId) => {// can be modifed to allow adding other users created followsets
+try {
+  await setUserFollowsSet(req, res, userId);
+  await linkStocksAndFollowset(req, res, userId);
+  res.json({ success: true, message: 'Followset added successfully' });
+}
+
+catch (err) {
+  console.error('Database error:', err);
+  res.status(500).json({ error: 'Database error' });
+
+}
+
+}
+
+//NOT USED FOR NOW
+export const getFollowsetById = (req, res) => {
+  const followsetId = req.query.followsetId;
+  if (!followsetId) {
+    return res.status(400).json({ error: 'Missing followsetId' });
+  }
+  db.query(
+    'SELECT * FROM followset WHERE id = ?',
+    [followsetId],
+    (err, results) => {
+      if (err) {
+        console.error('Database error:', err);
+        return res.status(500).json({ error: 'Database error' });
+      }
+      if (results.length === 0) {
+        return res.status(404).json({ error: 'Followset not found' });
+      }
+      res.json(results[0]);
+    }
+  );
+};
+
+
+//@Modify when we allow users to follow other users' followsets (+add owner/differentiate between owner and user_id(followers) of followsets)
+export const getFollowsetsForUser = (userId) => { 
+  return new Promise((resolve, reject) => {
+    db.query(
+      'SELECT * FROM followset WHERE user_id = ?',
+      [userId],
+      (err, results) => {
+        if (err) {
+          console.error('Database error:', err);
+          return reject(err);
+        }
+        resolve(results);
+      }
+    );
+  });
+};
+
 export const userfollowstock = (isFollowing, req, res, userId) => {
   const stockSymbol = req.body.stockSymbol;
   if (!userId || !stockSymbol) {
