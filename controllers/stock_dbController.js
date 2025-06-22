@@ -25,22 +25,24 @@ export const fetbunchofStockDB = (req, res) => {
 };
 
 
-const linkStocksAndFollowset = (req, res, userId) => { //creates the relationship between followset and stocks (nedded when creating a new followset)
+const linkStocksAndFollowset = (req, res, userId, followsetId) => { //creates the relationship between followset and stocks (nedded when creating a new followset)
   return new Promise((resolve, reject) => {
-    const followsetId = req.body.followsetId;
-    const allstockSymbols = req.body.stockSymbols; // Array of stock symbols to link
-
-    const query_pattern = "INSERT INTO followset_stocks (followset_id, user_id, stock_symbol) VALUES (?, ?, ?)";
+    
+    const followsetStocksIds = req.body.set_ids; // Array of stock symbols to link -->NOW IT IS AN ARRAY OF IDS AND THIS DOESNT EXIST YET
+                                               // problem: we use stock ids in the followset but they dont exist in db and could be different from the stock ids in the stocks table if implented
+                                              //the front autogenerates the id so we need instead that the end autogenerates idea and front follows
+                                              //OR use only symbols but need to send the symbols in the front end maybe separatly as body + symbols or include them in the body (via original kotlin object) from the front as a list of strings                                        
+    const query_pattern = "INSERT INTO followset_stocks (followset_id, user_id, stock_id) VALUES (?, ?, ?)";
     let completed = 0;
     let hasError = false;
 
-    if (!Array.isArray(allstockSymbols) || allstockSymbols.length === 0) {
+    if (!Array.isArray(followsetStocksIds) || followsetStocksIds.length === 0) {
       resolve();
       return;
     }
 
-    for (const stockSymbol of allstockSymbols) {
-      db.query(query_pattern, [followsetId, userId, stockSymbol], (err) => {
+    for (const stockID of followsetStocksIds) {
+      db.query(query_pattern, [followsetId, userId, stockID], (err) => {
         if (hasError) return;
         if (err) {
           hasError = true;
@@ -56,21 +58,24 @@ const linkStocksAndFollowset = (req, res, userId) => { //creates the relationshi
   });
 }
 
- const setUserFollowsSet = (req, res, userId) => { //set that the user follows a followset
-  
-  if (!userId) {
-    return res.status(400).json({ error: 'Missing userId' });
-  }
-
-  const { name, image_uri, user_description, notifications_prices, id } = req.body;
-
-  const query = "INSERT INTO followset (name, image_uri, user_description, notifications_prices, id, user_id) VALUES (?, ?, ?, ?, ?, ?)";
-  db.query(query, [name, image_uri, user_description, notifications_prices, id, userId], (err, result) => {
-    if (err) {
-      console.error('Database error:', err);
-      return res.status(500).json({ error: 'Database error' });
+const setUserFollowsSet = (req, res, userId) => {
+  return new Promise((resolve, reject) => {
+    if (!userId) {
+      res.status(400).json({ error: 'Missing userId' });
+      return;
     }
-    
+
+    const { name, image_uri, user_description, notifications_prices } = req.body;
+
+    const query = "INSERT INTO followset (name, image_uri, user_description, notifications_prices, user_id, owner_id) VALUES (?, ?, ?, ?, ?, ?)";
+    db.query(query, [name, image_uri, user_description, notifications_prices, userId, userId], (err, result) => {
+      if (err) {
+        console.error('Database error:', err);
+        res.status(500).json({ error: 'Database error' });
+        return reject(err);
+      }
+      resolve(result.insertId);
+    });
   });
 };
 
@@ -79,8 +84,8 @@ const linkStocksAndFollowset = (req, res, userId) => { //creates the relationshi
 
 export const addNewFollowsettoDB = async (req, res, userId) => {// can be modifed to allow adding other users created followsets
 try {
-  await setUserFollowsSet(req, res, userId);
-  await linkStocksAndFollowset(req, res, userId);
+  const followsetId = await setUserFollowsSet(req, res, userId);
+  await linkStocksAndFollowset(req, res, userId, followsetId);
   res.json({ success: true, message: 'Followset added successfully' });
 }
 
