@@ -67,10 +67,10 @@ const setUserFollowsSet = (req, res, userId) => {
 
     const { name, image_uri, user_description, notifications_prices } = req.body;
 
-    const query = "INSERT INTO followset (name, image_uri, user_description, notifications_prices, user_id, owner_id) VALUES (?, ?, ?, ?, ?, ?)";
+    const query = "INSERT INTO followset (name, image_uri, user_description, notification_prices, user_id, owner_id) VALUES (?, ?, ?, ?, ?, ?)";
     db.query(query, [name, image_uri, user_description, notifications_prices, userId, userId], (err, result) => {
       if (err) {
-        console.error('Database error:', err);
+        console.error('setUserFollowsSet: Database error:', err);
         res.status(500).json({ error: 'Database error' });
         return reject(err);
       }
@@ -91,7 +91,7 @@ try {
 
 catch (err) {
   console.error('Database error:', err);
-  res.status(500).json({ error: 'Database error' });
+  res.status(500).json({ error: 'addNewFollowsettoDB: Database error' });
 
 }
 
