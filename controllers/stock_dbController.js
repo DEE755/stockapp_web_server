@@ -50,7 +50,7 @@ const linkStocksAndFollowset = (req, res, followsetId) => { //creates the relati
           return;
         }
         completed++;
-        if (completed === allstockSymbols.length) {
+        if (completed === followsetStocksIds.length) {
           resolve();
         }
       });
