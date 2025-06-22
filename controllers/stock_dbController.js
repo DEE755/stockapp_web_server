@@ -67,7 +67,7 @@ const setUserFollowsSet = (req, res, userId) => {
 
     const { name, image_uri, user_description, notifications_prices } = req.body;
 
-    const query = "INSERT INTO followset (name, image_uri, user_description, notification_prices, user_id, owner_id) VALUES (?, ?, ?, ?, ?, ?)";
+    const query = "INSERT INTO followset (name, image_uri, user_description, notifications_prices, user_id, owner_id) VALUES (?, ?, ?, ?, ?, ?)";
     db.query(query, [name, image_uri, user_description, notifications_prices, userId, userId], (err, result) => {
       if (err) {
         console.error('setUserFollowsSet: Database error:', err);
