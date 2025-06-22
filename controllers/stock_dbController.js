@@ -71,7 +71,7 @@ const setUserFollowsSet = (req, res, userId) => {
     db.query(query, [name, image_uri, user_description, notifications_prices, userId, userId], (err, result) => {
       if (err) {
         console.error('setUserFollowsSet: Database error:', err);
-        res.status(500).json({ error: 'Database error' });
+        res.status(500).json({ error: 'setUserFollowsSet: Database error' });
         return reject(err);
       }
       resolve(result.insertId);
