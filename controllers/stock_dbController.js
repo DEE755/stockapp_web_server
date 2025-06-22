@@ -25,14 +25,14 @@ export const fetbunchofStockDB = (req, res) => {
 };
 
 
-const linkStocksAndFollowset = (req, res, userId, followsetId) => { //creates the relationship between followset and stocks (nedded when creating a new followset)
+const linkStocksAndFollowset = (req, res, followsetId) => { //creates the relationship between followset and stocks (nedded when creating a new followset)
   return new Promise((resolve, reject) => {
     
     const followsetStocksIds = req.body.set_ids; // Array of stock symbols to link -->NOW IT IS AN ARRAY OF IDS AND THIS DOESNT EXIST YET
                                                // problem: we use stock ids in the followset but they dont exist in db and could be different from the stock ids in the stocks table if implented
                                               //the front autogenerates the id so we need instead that the end autogenerates idea and front follows
                                               //OR use only symbols but need to send the symbols in the front end maybe separatly as body + symbols or include them in the body (via original kotlin object) from the front as a list of strings                                        
-    const query_pattern = "INSERT INTO followset_stocks (followset_id, user_id, stock_id) VALUES (?, ?, ?)";
+    const query_pattern = "INSERT INTO followset_stocks (followset_id, stock_id) VALUES (?, ?)";
     let completed = 0;
     let hasError = false;
 
@@ -42,7 +42,7 @@ const linkStocksAndFollowset = (req, res, userId, followsetId) => { //creates th
     }
 
     for (const stockID of followsetStocksIds) {
-      db.query(query_pattern, [followsetId, userId, stockID], (err) => {
+      db.query(query_pattern, [followsetId, stockID], (err) => {
         if (hasError) return;
         if (err) {
           hasError = true;
@@ -85,7 +85,7 @@ const setUserFollowsSet = (req, res, userId) => {
 export const addNewFollowsettoDB = async (req, res, userId) => {// can be modifed to allow adding other users created followsets
 try {
   const followsetId = await setUserFollowsSet(req, res, userId);
-  await linkStocksAndFollowset(req, res, userId, followsetId);
+  await linkStocksAndFollowset(req, res, followsetId);
   res.json({ success: true, message: 'Followset added successfully' });
 }
 
