@@ -191,7 +191,7 @@ export const userfollowstock = (isFollowing, req, res, userId) => {
 
 
 
-export const getUserFollowedStocks = (userId) => {
+export const getUserFollowedStocksIds = (userId) => {
   return new Promise((resolve, reject) => {
     db.query(
       'SELECT stock_id FROM stocks JOIN followed_by_user_stocks ON stocks.symbol = followed_by_user_stocks.followed_stock_symbol WHERE followed_by_user_stocks.user_id = ?',
@@ -202,6 +202,24 @@ export const getUserFollowedStocks = (userId) => {
           return reject(err);
         }
         // Return the list of ids of followed stocks as array
+        resolve(results);
+      }
+    );
+  });
+};
+
+
+export const getfollowedStocks = (userId) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      'SELECT * FROM stocks JOIN followed_by_user_stocks ON stocks.symbol = followed_by_user_stocks.followed_stock_symbol WHERE followed_by_user_stocks.user_id = ?',
+      [userId],
+      (err, results) => {
+        if (err) {
+          console.error('Database error:', err);
+          return reject(err);
+        }
+        // Return the list of followed stock symbols as array
         resolve(results);
       }
     );
@@ -232,7 +250,7 @@ export const getCurrentPrice = async (symbol) => {
   export const fetchUpdatePricesForUser = async(userId) => {
     //const userId = req.query.userId;
 
-    const results = await getUserFollowedStocks(userId);
+    const results = await getfollowedStocks(userId);
 
 
     for (let i = 0; i < results.length; i++) {
@@ -246,7 +264,7 @@ export const getCurrentPrice = async (symbol) => {
     export const fetchUpdateMovingAveragesForUser = async(res, userId) => {
       //const userId = req.query.userId;
       try {
-        const results = await getUserFollowedStocks(userId);
+        const results = await getfollowedStocks(userId);
         for (let i = 0; i < results.length; i++) {
           getAllMovingAverages(results[i]);
         }
@@ -259,7 +277,7 @@ export const getCurrentPrice = async (symbol) => {
       export const getUpdateForFollowedStocksMA = async (res, userId ) => {
 
       await fetchUpdatePricesForUser(userId);
-        const results = await getUserFollowedStocks(userId);
+        const results = await getfollowedStocks(userId);
         const prices = results.map(stock => {
           return {
             symbol: stock.symbol,
@@ -276,7 +294,7 @@ export const getCurrentPrice = async (symbol) => {
       export const getUpdateForFollowedStocksPR = async (res, userId ) => {
         await fetchUpdatePricesForUser(userId);
 
-        const results = await getUserFollowedStocks(userId);
+        const results = await getfollowedStocks(userId);
 
         const prices = results.map(stock => {
           return {
