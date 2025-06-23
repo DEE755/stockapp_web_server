@@ -191,17 +191,17 @@ export const userfollowstock = (isFollowing, req, res, userId) => {
 
 
 
-export const getfollowedStocks = (userId) => {
+export const getUserFollowedStocks = (userId) => {
   return new Promise((resolve, reject) => {
     db.query(
-      'SELECT * FROM stocks JOIN followed_by_user_stocks ON stocks.symbol = followed_by_user_stocks.followed_stock_symbol WHERE followed_by_user_stocks.user_id = ?',
+      'SELECT stock_id FROM stocks JOIN followed_by_user_stocks ON stocks.symbol = followed_by_user_stocks.followed_stock_symbol WHERE followed_by_user_stocks.user_id = ?',
       [userId],
       (err, results) => {
         if (err) {
           console.error('Database error:', err);
           return reject(err);
         }
-        // Return the list of followed stock symbols as array
+        // Return the list of ids of followed stocks as array
         resolve(results);
       }
     );
@@ -287,3 +287,5 @@ export const getCurrentPrice = async (symbol) => {
         res.json(prices);
 
       }
+
+     
