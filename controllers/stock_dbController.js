@@ -119,6 +119,28 @@ export const getFollowsetById = (req, res) => {
   );
 };
 
+//retrieve the followsets user follows 
+export const getUserFollowsets = (req, res, userId) => {
+
+  if (!userId) {
+    return res.status(400).json({ error: 'Missing userId' });
+  }
+  db.query(
+    'SELECT DISTINCT name, user_id, stock_id FROM followset JOIN followset_stocks WHERE user_id = ?',
+    [userId],
+    (err, results) => {
+      if (err) {
+        console.error('Database error:', err);
+        return res.status(500).json({ error: 'Database error' });
+      }
+      if (results.length === 0) {
+        return res.status(404).json({ error: 'No Followset found for this user' });
+      }
+      res.json(results[0]);
+    }
+  );
+};
+
 
 //@Modify when we allow users to follow other users' followsets (+add owner/differentiate between owner and user_id(followers) of followsets)
 export const getFollowsetsForUser = (userId) => { 
