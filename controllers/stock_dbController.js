@@ -232,7 +232,7 @@ export const getCurrentPrice = async (symbol) => {
   export const fetchUpdatePricesForUser = async(userId) => {
     //const userId = req.query.userId;
 
-    const results = await getfollowedStocks(userId);
+    const results = await getUserFollowedStocks(userId);
 
 
     for (let i = 0; i < results.length; i++) {
@@ -246,7 +246,7 @@ export const getCurrentPrice = async (symbol) => {
     export const fetchUpdateMovingAveragesForUser = async(res, userId) => {
       //const userId = req.query.userId;
       try {
-        const results = await getfollowedStocks(userId);
+        const results = await getUserFollowedStocks(userId);
         for (let i = 0; i < results.length; i++) {
           getAllMovingAverages(results[i]);
         }
@@ -259,7 +259,7 @@ export const getCurrentPrice = async (symbol) => {
       export const getUpdateForFollowedStocksMA = async (res, userId ) => {
 
       await fetchUpdatePricesForUser(userId);
-        const results = await getfollowedStocks(userId);
+        const results = await getUserFollowedStocks(userId);
         const prices = results.map(stock => {
           return {
             symbol: stock.symbol,
@@ -276,7 +276,7 @@ export const getCurrentPrice = async (symbol) => {
       export const getUpdateForFollowedStocksPR = async (res, userId ) => {
         await fetchUpdatePricesForUser(userId);
 
-        const results = await getfollowedStocks(userId);
+        const results = await getUserFollowedStocks(userId);
 
         const prices = results.map(stock => {
           return {
