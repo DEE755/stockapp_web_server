@@ -1,7 +1,7 @@
 
 import express from 'express';
 import { authenticateToken } from '../middleware/authenticateToken.js';
-import { userfollowstock, getUpdateForFollowedStocksMA,getUpdateForFollowedStocksPR, addNewFollowsettoDB, getUserFollowsets, getUserFollowedStocks} from '../controllers/stock_dbController.js';
+import { userfollowstock, getUpdateForFollowedStocksMA,getUpdateForFollowedStocksPR, addNewFollowsettoDB, getUserFollowsets, getUserFollowedStocksIds} from '../controllers/stock_dbController.js';
 
 const userProtectedRouter = express.Router();
 
@@ -42,7 +42,7 @@ userProtectedRouter.get('/followset/pull', (req,res) =>
 
 userProtectedRouter.get('/stocks/pull', (req,res) =>
 {
-getUserFollowedStocks(req.user.userId);
+getUserFollowedStocksIds(req.user.userId);
 
 });
 
