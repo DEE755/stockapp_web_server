@@ -42,7 +42,7 @@ userProtectedRouter.get('/followset/pull', (req,res) =>
 
 userProtectedRouter.get('/stocks/pull', (req,res) =>
 {
-getUserFollowedStocks(req, res, req.user.userId);
+getUserFollowedStocks(req.user.userId);
 
 });
 
