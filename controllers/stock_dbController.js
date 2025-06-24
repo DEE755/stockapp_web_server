@@ -204,8 +204,8 @@ export const getUserFollowedStocksIds = (userId, res) => {
           if (res) res.status(500).json({ error: 'Database error' });
           return reject(err);
         }
-        // ...your code...
-      onsole.log('Sending response for /user/stocks/pull');
+       
+      console.log('Sending response for /user/stocks/pull');
         // Return just the array of IDs
         resolve(results.map(row => row.stock_id));
       }
