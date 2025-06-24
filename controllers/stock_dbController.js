@@ -205,7 +205,7 @@ export const getUserFollowedStocksIds = (userId, res) => {
           return reject(err);
         }
        
-      console.log('Sending response for /user/stocks/pull');
+      console.log('Sending response for /user/stocks/pull:, results:', results);
         // Return just the array of IDs
         resolve(results);
       }
