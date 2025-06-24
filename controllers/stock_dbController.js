@@ -202,8 +202,8 @@ export const getUserFollowedStocksIds = (userId, res) => {
           if (res) res.status(500).json({ error: 'Database error' });
           return reject(err);
         }
-        // Return the list of ids of followed stocks as array
-        resolve(results);
+        // Return just the array of IDs
+        resolve(results.map(row => row.stock_id));
       }
     );
   });
