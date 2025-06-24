@@ -192,6 +192,8 @@ export const userfollowstock = (isFollowing, req, res, userId) => {
 
 
 export const getUserFollowedStocksIds = (userId, res) => {
+  console.log('Received request entered for /user/stocks/pull');
+
   return new Promise((resolve, reject) => {
     db.query(
       'SELECT stock_id FROM stocks JOIN followed_by_user_stocks ON stocks.symbol = followed_by_user_stocks.followed_stock_symbol WHERE followed_by_user_stocks.user_id = ?',
@@ -202,6 +204,8 @@ export const getUserFollowedStocksIds = (userId, res) => {
           if (res) res.status(500).json({ error: 'Database error' });
           return reject(err);
         }
+        // ...your code...
+      onsole.log('Sending response for /user/stocks/pull');
         // Return just the array of IDs
         resolve(results.map(row => row.stock_id));
       }
