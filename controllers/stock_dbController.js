@@ -207,7 +207,7 @@ export const getUserFollowedStocksIds = (userId, res) => {
        
       console.log('Sending response for /user/stocks/pull:, results:', results);
         // Return just the array of IDs
-        resolve(results);
+        resolve(results.map(stock => stock.stock_id));
       }
     );
   });
