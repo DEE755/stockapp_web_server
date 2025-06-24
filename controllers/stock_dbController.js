@@ -191,7 +191,7 @@ export const userfollowstock = (isFollowing, req, res, userId) => {
 
 
 
-export const getUserFollowedStocksIds = (userId) => {
+export const getUserFollowedStocksIds = (userId, res) => {
   return new Promise((resolve, reject) => {
     db.query(
       'SELECT stock_id FROM stocks JOIN followed_by_user_stocks ON stocks.symbol = followed_by_user_stocks.followed_stock_symbol WHERE followed_by_user_stocks.user_id = ?',
@@ -199,6 +199,7 @@ export const getUserFollowedStocksIds = (userId) => {
       (err, results) => {
         if (err) {
           console.error('Database error:', err);
+          if (res) res.status(500).json({ error: 'Database error' });
           return reject(err);
         }
         // Return the list of ids of followed stocks as array
