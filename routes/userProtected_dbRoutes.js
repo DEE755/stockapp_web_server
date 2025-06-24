@@ -40,11 +40,15 @@ userProtectedRouter.get('/followset/pull', (req,res) =>
 
     });
 
-userProtectedRouter.get('/stocks/pull', (req,res) =>
-{
-getUserFollowedStocksIds(req.user.userId,res);
-
+userProtectedRouter.get('/stocks/pull', async (req, res) => {
+  try {
+    const ids = await getUserFollowedStocksIds(req.user.user_id);
+    res.json(ids); //send back the result to the client
+  } catch (err) {
+    res.status(500).json({ error: 'Database error' });
+  }
 });
+
 
 
 
