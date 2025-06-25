@@ -120,25 +120,26 @@ export const getFollowsetById = (req, res) => {
 };
 
 //retrieve the followsets user follows 
-export const getUserFollowsets = (req, res, userId) => {
-
-  if (!userId) {
-    return res.status(400).json({ error: 'Missing userId' });
-  }
-  db.query(
-    'SELECT DISTINCT name, user_id, stock_id FROM followset JOIN followset_stocks WHERE user_id = ?',
-    [userId],
-    (err, results) => {
-      if (err) {
-        console.error('Database error:', err);
-        return res.status(500).json({ error: 'Database error' });
-      }
-      if (results.length === 0) {
-        return res.status(404).json({ error: 'No Followset found for this user' });
-      }
-      res.json(results[0]);
+export const getUserFollowsets = (userId) => {
+  return new Promise((resolve, reject) => {
+    if (!userId) {
+      return reject({ status: 400, error: 'Missing userId' });
     }
-  );
+    db.query(
+      'SELECT DISTINCT name, user_id, stock_id FROM followset JOIN followset_stocks WHERE user_id = ?',
+      [userId],
+      (err, results) => {
+        if (err) {
+          console.error('Database error:', err);
+          return reject({ status: 500, error: 'Database error' });
+        }
+        if (results.length === 0) {
+          return reject({ status: 404, error: 'No Followset found for this user' });
+        }
+        resolve(results);
+      }
+    );
+  });
 };
 
 
