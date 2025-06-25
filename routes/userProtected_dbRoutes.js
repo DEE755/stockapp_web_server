@@ -35,8 +35,14 @@ userProtectedRouter.post('/followset/push', (req,res) =>
 
     });
 
-userProtectedRouter.get('/followset/pull', (req,res) => 
-    {getUserFollowsets(req,res, req.user.user_id);
+userProtectedRouter.get('/followset/pull', (req,res) => {
+    try{
+        const followsets=getUserFollowsets(req,res, req.user.user_id);
+        res.json(followsets); //send back the result to the client
+    } catch (err) {
+     
+        res.status(500).json({ error: 'Database error' });
+    }
 
     });
 
