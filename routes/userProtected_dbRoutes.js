@@ -38,7 +38,9 @@ userProtectedRouter.post('/followset/push', (req,res) =>
 userProtectedRouter.get('/followset/pull', (req,res) => {
     try{
         const followsets=getUserFollowsets(req,res, req.user.user_id);
+        console.log('Followsets fetched:', followsets);
         res.json(followsets); //send back the result to the client
+        
     } catch (err) {
      
         res.status(500).json({ error: 'Database error' });
