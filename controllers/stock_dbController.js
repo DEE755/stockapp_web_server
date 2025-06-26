@@ -127,9 +127,9 @@ export const getUserFollowsets = async (userId) => {
     }
 
     db.query(
-      `SELECT fs.name, fs.user_id, fss.stock_id
-       FROM followset as fs
-       JOIN followset_stocks as fss ON fs.followset_id = fss.followset_id
+      `SELECT fs.followset_id, fs.name, fs.user_id, fss.stock_id
+       FROM followset AS fs
+       JOIN followset_stocks AS fss ON fs.followset_id = fss.followset_id
        WHERE fs.user_id = ?`,
       [userId],
       (err, results) => {
@@ -141,18 +141,19 @@ export const getUserFollowsets = async (userId) => {
           return reject({ status: 404, error: 'No Followset found for this user' });
         }
 
-        // making proper followsets object for Gson mapping in the front end
         const followsetsMap = {};
 
         results.forEach(row => {
-          if (!followsetsMap[row.name]) {
-            followsetsMap[row.name] = {
+          const id = row.followset_id;
+          if (!followsetsMap[id]) {
+            followsetsMap[id] = {
+              followset_id: id,
               name: row.name,
               user_id: row.user_id,
-              stocks: []
+              set_ids: []
             };
           }
-          followsetsMap[row.name].stocks.push(row.stock_id);
+          followsetsMap[id].set_ids.push(parseInt(row.stock_id, 10));
         });
 
         const groupedFollowsets = Object.values(followsetsMap);
@@ -161,6 +162,7 @@ export const getUserFollowsets = async (userId) => {
     );
   });
 };
+
 
 
 //@Modify when we allow users to follow other users' followsets (+add owner/differentiate between owner and user_id(followers) of followsets)
