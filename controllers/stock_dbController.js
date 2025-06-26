@@ -126,7 +126,7 @@ export const getUserFollowsets = (userId) => {
       return reject({ status: 400, error: 'Missing userId' });
     }
     db.query(
-      'SELECT DISTINCT name, user_id, stock_id FROM followset JOIN followset_stocks WHERE user_id = ?',
+      'SELECT DISTINCT name, user_id, stock_id, co FROM followset JOIN followset_stocks WHERE user_id = ?',
       [userId],
       (err, results) => {
         if (err) {
