@@ -14,9 +14,9 @@ userProtectedRouter.post('/follows_stock', (req, res) => {
     userfollowstock(true, req, res, userId);
 });
 
-userProtectedRouter.post('/unfollows_stock', (req, res) => 
-    {const userId = req.user.user_id;
-        userfollowstock(false, res, req, userId);
+userProtectedRouter.post('/unfollows_stock', (req, res) => { 
+    const userId = req.user.user_id;
+        userfollowstock(false, req, res, userId);
     });
 
 userProtectedRouter.get('/get_update_for_followed_stocksMA', (req, res) => {
