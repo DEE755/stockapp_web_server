@@ -120,13 +120,17 @@ export const getFollowsetById = (req, res) => {
 };
 
 //retrieve the followsets user follows 
-export const getUserFollowsets = (userId) => {
+export const getUserFollowsets = async (userId) => {
   return new Promise((resolve, reject) => {
     if (!userId) {
       return reject({ status: 400, error: 'Missing userId' });
     }
+
     db.query(
-      'SELECT DISTINCT name, user_id, stock_id FROM followset JOIN followset_stocks WHERE user_id = ?',
+      `SELECT fs.name, fs.user_id, fss.stock_id
+       FROM followset as fs
+       JOIN followset_stocks as fss ON fs.followset_id = fss.followset_id
+       WHERE fs.user_id = ?`,
       [userId],
       (err, results) => {
         if (err) {
@@ -136,7 +140,23 @@ export const getUserFollowsets = (userId) => {
         if (results.length === 0) {
           return reject({ status: 404, error: 'No Followset found for this user' });
         }
-        resolve(results);
+
+        // making proper followsets object for Gson mapping in the front end
+        const followsetsMap = {};
+
+        results.forEach(row => {
+          if (!followsetsMap[row.name]) {
+            followsetsMap[row.name] = {
+              name: row.name,
+              user_id: row.user_id,
+              stocks: []
+            };
+          }
+          followsetsMap[row.name].stocks.push(row.stock_id);
+        });
+
+        const groupedFollowsets = Object.values(followsetsMap);
+        resolve(groupedFollowsets);
       }
     );
   });
