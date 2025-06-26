@@ -188,11 +188,16 @@ export const userfollowstock = (isFollowing, req, res, userId) => {
     return res.status(400).json({ error: 'Missing userId or stockSymbol' });
   }
 
+  // Ensure stockSymbol is a string and wrap it in quotes if needed
+ 
+  const formattedStockSymbol = typeof stockSymbol === 'string' ? stockSymbol : String(stockSymbol);
+
   const query = isFollowing
     ? 'INSERT INTO followed_by_user_stocks (user_id, followed_stock_symbol) VALUES (?, ?)'
     : 'DELETE FROM followed_by_user_stocks WHERE user_id = ? AND followed_stock_symbol = ?';
+    
 
-  db.query(query, [userId, stockSymbol], (err) => {
+  db.query(query, [userId, formattedStockSymbol], (err) => {
     if (err) {
       console.error('Database error:', err);
       return res.status(500).json({ error: 'Database error' });
