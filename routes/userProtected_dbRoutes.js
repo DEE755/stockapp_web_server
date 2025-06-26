@@ -35,18 +35,16 @@ userProtectedRouter.post('/followset/push', (req,res) =>
 
     });
 
-userProtectedRouter.get('/followset/pull', (req,res) => {
-    try{
-        const followsets=getUserFollowsets(req.user.user_id);
+userProtectedRouter.get('/followset/pull', async (req, res) => {
+    try {
+        const followsets = await getUserFollowsets(req.user.user_id);
         console.log('Followsets fetched:', followsets);
         res.json(followsets); //send back the result to the client
-        
     } catch (err) {
-     
+        console.error('Error fetching followsets:', err);
         res.status(500).json({ error: 'Database error' });
     }
-
-    });
+});
 
 userProtectedRouter.get('/stocks/pull', async (req, res) => {
   try {
