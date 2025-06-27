@@ -1,7 +1,7 @@
 
 import express from 'express';
 import { authenticateToken } from '../middleware/authenticateToken.js';
-import { userfollowstock, getUpdateForFollowedStocksMA,getUpdateForFollowedStocksPR, addNewFollowsettoDB, getUserFollowsets, getUserFollowedStocksIds} from '../controllers/stock_dbController.js';
+import { userfollowstock, getUpdateForFollowedStocksMA,getUpdateForFollowedStocksPR, addNewFollowsettoDB, getUserFollowsets, getUserFollowedStocksIds, setUserUnfollowsFollowSet} from '../controllers/stock_dbController.js';
 
 const userProtectedRouter = express.Router();
 
@@ -33,6 +33,11 @@ userProtectedRouter.get('/get_update_for_followed_stocksPR', (req,res) => {
 userProtectedRouter.post('/followset/push', (req,res) => 
     {addNewFollowsettoDB(req,res, req.user.user_id);
 
+    });
+
+userProtectedRouter.post('/followset/unfollow', async (req, res) => {
+       const result = await setUserUnfollowsFollowSet(req, res, req.user.user_id);
+       res.json(result);
     });
 
 userProtectedRouter.get('/followset/pull', async (req, res) => {
