@@ -35,6 +35,7 @@ userProtectedRouter.post('/followset/push', (req,res) =>
 
     });
 
+    //unfollow a followset but keep it in the database to allow other users to follow it: marked as userId= -1
 userProtectedRouter.post('/followset/unfollow', async (req, res) => {
        const result = await setUserUnfollowsFollowSet(req, res, req.user.user_id);
        res.json(result);
