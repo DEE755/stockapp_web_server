@@ -30,9 +30,9 @@ userProtectedRouter.get('/get_update_for_followed_stocksPR', (req,res) => {
 });
 
 
-userProtectedRouter.post('/followset/push', async (req,res) => 
-    {const FollowsetInsertId = await addNewFollowsettoDB(req,res, req.user.user_id);
-        res.json(FollowsetInsertId)
+userProtectedRouter.post('/followset/push', (req,res) => 
+    {addNewFollowsettoDB(req,res, req.user.user_id);
+
 
     });
 

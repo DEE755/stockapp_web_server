@@ -111,7 +111,7 @@ export const addNewFollowsettoDB = async (req, res, userId) => {// can be modife
 try {
   const followsetId = await setUserFollowsSet(req, res, userId);
   await linkStocksAndFollowset(req, res, followsetId);
-  return followsetId; 
+  res.json({success: true, message: 'Followset added successfully', back_id: followsetId});// return the id of the followset created so the front can use it to updateand sync the followset
 }
 
 catch (err) {
