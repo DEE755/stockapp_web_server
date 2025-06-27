@@ -93,6 +93,7 @@ export const setUserUnfollowsFollowSet = (req, res, userId) => {
                   UPDATE followset SET user_id = -1 WHERE user_id = ? AND followset_id = ?;
                   SET FOREIGN_KEY_CHECKS = 1;`;
 
+    console.log('setUserUnfollowsFollowSet: Executing query:', query, 'with params:', [userId, followset_id]);         
     db.query(query, [userId, followset_id], (err, result) => {
       if (err) {
         console.error('setUserUnfollowsFollowSet: Database error:', err);
