@@ -79,6 +79,31 @@ const setUserFollowsSet = (req, res, userId) => {
   });
 };
 
+export const setUserUnfollowsFollowSet = (req, res, userId) => {
+
+  return new Promise((resolve, reject) => {
+    if (!userId) {
+      res.status(400).json({ error: 'Missing userId' });
+      return;
+    }
+
+    const { followset_id } = req.body.followset_id;
+
+    const query = `SET FOREIGN_KEY_CHECKS = 0;
+                  UPDATE followset SET user_id = -1 
+                  WHERE user_id = ? AND followset_id = ?;
+                  SET FOREIGN_KEY_CHECKS = 1;`
+    db.query(query, [userId, followset_id], (err, result) => {
+      if (err) {
+        console.error('setUserUnfollowsFollowSet: Database error:', err);
+        res.status(500).json({ error: 'setUserUnfollowsFollowSet: Database error' });
+        return reject(err);
+      }
+      resolve(result);
+    });
+  });
+};
+
 
 //we can separate the logic of creating a followset and when a user follows it.
 
