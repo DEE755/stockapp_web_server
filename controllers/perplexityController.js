@@ -26,6 +26,6 @@ export const askAIPerplexity = async (req, res) => {
     res.json({ reply: data.choices?.[0]?.message?.content || 'No reply received.' });
   } catch (error) {
     console.error('Error fetching response from Perplexity:', error);
-    res.status(500).send('Error getting AI reply');
+    res.status(500).json({ error: 'Error getting AI reply' });
   }
 };

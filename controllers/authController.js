@@ -77,7 +77,7 @@ export const secured_loginRequest = async (req, res) => {
     // Check if the user exists
     const user = await getUserFromDb(username);
     if (!user) {
-      return res.status(401).send('Invalid credentials');
+      return res.status(401).json({ error: 'Invalid credentials' });
     }
 
     // 2. Check password
@@ -105,7 +105,7 @@ export const secured_loginRequest = async (req, res) => {
     });
   } catch (err) {
     console.error('Error fetching user:', err);
-    res.status(500).send('Internal server error');
+    res.status(500).json({ error: 'Internal server error' });
   }
 }
 
